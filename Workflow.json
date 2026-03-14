@@ -1,0 +1,581 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1808,
+        832
+      ],
+      "id": "2b5c3812-3bed-4644-9f1a-017523ba3a8d",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Write a professional, SEO-optimized product description for the product: {{ $json.title }}. \n\nThe output must be formatted in clean HTML (using <h2>, <p>, <ul>, <li>, and <strong> tags). Do not include <html> or <body> tags, and do not include the product title as a header.\n\nIMPORTANT FORMATTING RULES:\n1. Do NOT use Markdown syntax. Do not use asterisks (**) for bolding. \n2. Use <strong> tags for bold text.\n3. Do not include <html>, <head>, or <body> tags.\n4. Do not include the product title as a header.\n5. Do not include code block fences (```html).\n\nFollow this exact structure:\n\n1. <h2>Overview</h2>: A 2-3 sentence paragraph explaining what the product is and its primary benefits.\n2. <h2>Key Features</h2>: A bulleted list of 5-6 technical or health benefits.\n3. <h2>Size & Packaging</h2>: A bulleted list including the net weight/size (extracted from the title if possible) and packaging details.\n4. <h2>Why Choose [Product Name]?</h2>: A short paragraph explaining the unique value proposition.\n5. <h2>Usage Suggestions</h2>: A bulleted list of how to use the product.\n6. <h2>Storage Instructions</h2>: A short sentence on how to store the product (e.g., cool, dry place).\n\nOnly return the HTML code. No introductory text."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        32,
+        1696
+      ],
+      "id": "42cd282d-f808-4ab6-a691-903fc18834b4",
+      "name": "Message a model",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "authentication": "accessToken",
+        "resource": "product",
+        "operation": "update",
+        "productId": "={{ $('Get row(s) in sheet').item.json.id }}",
+        "updateFields": {
+          "body_html": "={{ $json.content.parts[0].text.replace(/```html|```/g, '').replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>').trim() }}"
+        }
+      },
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        432,
+        1840
+      ],
+      "id": "1f570116-8342-4076-85b7-4cd06ae4c2cd",
+      "name": "Update a product"
+    },
+    {
+      "parameters": {
+        "jsCode": "const departments = [\n  \"ATTA\", \"BAKERY\", \"CHUTNEY/PICKLES/PASTES/PULP\", \"COCONUT/COCONUT CREAM\", \n  \"COSMETICS\", \"Customer Payments\", \"DAIRY\", \"DISPOSABELS\", \"DIWALI\", \n  \"DRINK-MIX/SYRUPS/TEA\", \"DRY FRUIT/NUTS\", \"DRY SNACKS/CHIPS/NAMKEEN\", \n  \"FISH/MEAT\", \"FLOUR\", \"FRESH SUPPLIES\", \"FROZEN\", \"GHEE\", \"GIFT VOUCHERS\", \n  \"HERBALS\", \"HOME CARE\", \"INSTANT MIX/READY TO COOK\", \"KITCHEN EXPENDITURE\", \n  \"LENTILS\", \"LOLLIES/CANDIES/CHOCOLATES\", \"MILLETS\", \"MOBILE PLANS/RECHARGE\", \n  \"MUKHWAS\", \"NOODLES\", \"OIL\", \"OTHERS\", \"PARTY PACKS\", \"POS Payment Surcharges\", \n  \"PROMO ITEMS\", \"READY TO EAT\", \"RELIGIOUS/POOJA ITEMS\", \"RICE\", \n  \"SOFT DRINKS/JUICES/LASSI\", \"SPICES\", \"SWEETS\", \"UNKNOWN\"\n];\n\n// This formats the list so n8n processes each department as a separate item\nreturn departments.map(dept => {\n  return {\n    json: { department_name: \"SWEETS\" }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1552,
+        992
+      ],
+      "id": "83dd5600-6e72-4e7a-b997-839268a73cdb",
+      "name": "Code in JavaScript",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "be897990-84a8-4bef-b291-59d8ccc29764",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "active",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -560,
+        1520
+      ],
+      "id": "cd8432a6-b686-4084-9b9b-a65010bc79de",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1VsJrnb5Nm54dt9MyDLDDP_BfIVOkOBrAvrZlMrwNY98",
+          "mode": "list",
+          "cachedResultName": "Apna Bazaar",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VsJrnb5Nm54dt9MyDLDDP_BfIVOkOBrAvrZlMrwNY98/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VsJrnb5Nm54dt9MyDLDDP_BfIVOkOBrAvrZlMrwNY98/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product Name": "={{ $json.title }}",
+            "Product Type": "={{ $json.product_type }}"
+          },
+          "matchingColumns": [
+            "Product Name"
+          ],
+          "schema": [
+            {
+              "id": "Product Type",
+              "displayName": "Product Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        944,
+        2128
+      ],
+      "id": "7c87d077-aa14-43fe-9ffe-afd5cfe032e2",
+      "name": "Append row in sheet",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -832,
+        1376
+      ],
+      "id": "1c52c9ad-61f1-435d-83cc-ea76a9f899ec",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60",
+          "mode": "list",
+          "cachedResultName": "Apna Bazaar - Archived",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product Name": "={{ $json.title }}",
+            "Product Cateogry": "={{ $json.product_type }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Product Cateogry",
+              "displayName": "Product Cateogry",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -240,
+        1808
+      ],
+      "id": "e23b4b2e-f26a-41c4-9f5a-aa1e4efdb9c2",
+      "name": "Append row in sheet1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Updated list\nconst alreadyUpdated = [\n \"DELHI 6-ALMOND ESSENCE-20ML\",\n \"KNORR-CHILLI GARLIC SAUCE-800 GM\",\n \"KNORR-CHILLI GARLIC SAUCE-800 GM\",\n \"NESTLE-EVERYDAY ORIGINAL-350GM\",\n \"KHUSHBOO-THICK POHA-400GM\",\n \"DOOBI-CHICKEN SOUP-70GM\",\n \"KNORR-CHILLI-GARLIC-800GM\",\n \"KNORR -CHILLI GARLIC SAUCE-400GM\",\n \"SHEZAN-CHILLI GARLIC-SAUCE-305GM\",\n \"MAGGI-CHICKEN-STOCK-72GM\",\n \"SHEZAN-MANGO JAM-440GM\",\n \"SHEZAN-MIXED FRUIT JAM-440GM\",\n \"ROSSEMOR-COCO POWDER-100 GM\",\n \"LYCA MOBILE-PREPAID PLAN S -$30\",\n \"OASIS COLOR VERMICELLI 400G\",\n \"MITCHELLS-WHITE VINEGAR-800ML\",\n \"GRANDMA-JAGGARY BALLS-1KG\",\n \"GRANDMA-JAGGARY BALLS-500GM\",\n \"NESTLE-EVERYDAY ORIGNAL POWDER TEA WHITENER-850GM\",\n \"TOOBA-SWEET CHILLI-355GM\",\n \"TOOBA-HOT SAUCE-270 GM\",\n \"TOOBA-MANGO ACHARI SAUCE-320 GM\",\n \"4 CORNER-BROWN SOYABEAN-500 GM\",\n \"KHUSHBOO-KOLHAPURI JAGGERY-1KG\",\n \"TOOBA KEWRA WATER-1LT\",\n \"HALAL-DOOBI-CHICKEN STOCK\",\n \"AYER-RICE FLAKE(POHA) THICK-500 GM\",\n \"KHUSHBOO-POHA MEDIUM-908GM\",\n \"KHUSHBOO-SOYA WADI-400GM\",\n \"KNORR CUBES\",\n \"KNORR-CHICKEN SOUP STOCK-20 GM\",\n \"TOOBA-CHILLI GARLIC SAUCE-300GM\",\n \"MITCHELLS-DATE TAMARIND CHUTNEY-300GM\",\n \"TOOBA-BAR B.Q SAUCE-320GM\",\n \"NATIONAL-RED CHILLI SAUCE-300ML\",\n \"4 CORNER-BLACK SOYABEAN-500 GM\",\n \"MITCHELLS-TAMARIND SAUCE-825 GM\",\n \"TOOBA-TAMARIND SAUCE-375 GM\",\n \"TOOBA-BROWN VINEGAR-320ML\",\n \"YOUNGS-MAYONNAISE-500 ML\",\n \"YOUNG- MAYO GARLIC SAUSE- 500 ML\",\n \"TOOBA-GARLIC SAUCE-340 GM\",\n \"MITCHEL-WHITE VINEGAR-1\",\n \"TOOBA-SOY SAUCE-320ML\",\n \"ROSSMOOR-INSTANT YEAST-33 GM\",\n \"PUFF-RICE-500 GM\",\n \"MITCHELLS-CHILLI GARLIC SAUCE-800GM\",\n \"MITCHELLS-TAMRIND SAUCE--300GM\",\n \"MITCHELL-GREEN CHILL SAUCE-800GM\",\n \"50 WAX TEALIGHT CANDLES\",\n \"DURRA BLOSSOM 250 ML\",\n \"SHEZAN -CHHILI SAUCE-300GM\",\n \"LUCKY STAR-PILCHARDS FISH IN HOT CHILLI SAUCE-400GM\",\n \"TOOBA -VERMSILLI- 200G\",\n \"TOOBA-PLUM SAUCE-320GM\",\n \"TOOBA-ROSE WATER-320GM\",\n \"TOOBA-TAMARIND SAUCE- 800ML\",\n \"TOOBA-SAMOSA SAUCE-320GM\",\n \"SHANGRILA-SOY SAUCE-300ML\",\n \"SHANGRILA-CHILLI SAUCE-300ML\",\n \"SHANGRILA-SYNTHETIC VINEGAR-800ML\",\n \"SHANGRILA- TOMATO KETCHUP- 450 GM\",\n \"NATIONAL-TOMATO SAUCE-300GM\",\n \"NTIONAL-CHILLI GARLIC SAUCE-300GM\",\n \"NATIONAL-HOT AND SPICY SAUCE-300GM\",\n \"NATIONAL-HOT AND SPICY SAUCE-800GM\",\n \"NATIONAL-GREEN CHILLI SAUSE-300GM\",\n \"NATIONAL-GREEN CHILLI SAUCE-800GM\",\n \"DADIJAN-GREEN CHILLI-PAPAD\",\n \"KNORR-CHILLI GARLIC SAUCE-800GM\",\n \"TOOBA-GREEN CHILLI SAUCE-280GM\",\n \"TOOBA-WHTE VINEGAR320ML-320 ML\",\n \"KH-SOYA WAD-SMALL\",\n \"KNORR-CHILLI GARLIC SAUCE-400GM\",\n \"DURRA ROSE 250ML\",\n \"LAZIZA SEVEYA\",\n \"AHMED-ROASTED VERMICELLI-150 GM 2\",\n \"AHMED-PHENY-150 GM 2\",\n \"PRAN-FLATTENED RICE-1KG\",\n \"FEVI KWIK-1GM\",\n \"EVERYDAY-MILK POWDER-450GM\",\n \"ROSSMOOR-INSTANT YEAST-33 GM 2\",\n \"HALEEM\",\n \"KNORR SOUP\",\n \"SHREEJI FOODS SOYA CHUNKS 200g\",\n \"KNORR-TOMATO-KETCHUP 800G\",\n \"HALDIRAMS-PUNJABI PAPAD-1 KG\",\n \"DADI JAN-ZEERA KHICHIYA-200GM\",\n \"DADI JAN-RICE GREEN CHILLI KHICHIYA-200GM\",\n \"DADI JAN-PANIPURI-48PCS\",\n \"SHEZAN-IMLEE SAUCE-310\",\n \"JAIPUR-POHA MEDIUM-500GM\",\n \"JAIPUR-POHA MEDIUM-1KG\",\n \"JAIPUR-PESI GUR-1KG\",\n \"PUNJABI SHAKKAR JAIPUR\",\n \"JAIPUR-KOLHAPURI MAMARA-1KG\",\n \"SRI GANESHRAMS-PAPAD-200GM\",\n \"JAIPUR-MASALA GUR-1KG\",\n \"PATTU-SOYA WADI-500 GM\",\n \"JAIPUR -SOYA VADI- 200 GM\",\n \"MAHARAJA CHOICE-EGG YELLOW FOOD COLOUR-50 ML\",\n \"SHAANDAR-SOYA CHAAP-800 GM\",\n \"TAAZA-SHAKKAR-1KG\",\n \"TAAZA-SOYA CHUNKS-250 GM\",\n \"DH-ROASTED VERMICELLI-500 GM\",\n \"DOUBLE HORSE-ROASTED VERMICELLI 1KG\",\n \"DOUBLE HORSE-2 MIN INSTANT IDIYAPPAM-200GM\",\n \"MAHARAJA CHOICE-ORANGE COLOUR-50 ML\",\n \"JAIPUR-MASALA SOYA CHAAP-800GM\",\n \"JK-PANIPOORI CHIPS-200GM\",\n \"JAIPUR- POHA THIN-1KG\",\n \"HALDIRAMS-BIKANERI PAPAD-1 KG\",\n \"SAC-KEWRA FLAVOUR-25ML\",\n \"SAC FOOD COLOUR\",\n \"SAC FOOD COLOUR 2\",\n \"SAC FOOD COLOUR 3\",\n \"SAC FOOD COLOUR 4\",\n \"REHMAT E SHREEN-PHENI-200GM\",\n \"MAHARAJA CHOICE-PLAIN PAPPADAM-100 GM\",\n \"PATTU-POHA MEDIUM/RICE FLAKES-500 GM\",\n \"PATAL-GUR FRZOEN-1 KG\",\n \"DADIJAN-POTATO CHIPS-3 D\",\n \"BANSI-COLOR-FRYUMS(HEART SHAPE)200GM\",\n \"DAL PAPAD-HANDMADE PUNJABI MASALA-200GM\",\n \"HARI OM-RAGI-PAPAD-100GM\",\n \"DADIJAN-RED CHILLI-PAPAD\",\n \"DADIJAN-ZEERA GARLIC-PAPAD\",\n \"PATALI GUR\",\n \"UTTAM-WHITE JAGGERY-450 GM\",\n \"DADI JAN-GREEN CHILLI PAPAD-200GMS\",\n \"DADI JAN-CHIPSTER-200GM\",\n \"JAIPUR-POHA THIK-1KG\",\n \"AMMI SAMAYAL-COCONUIT SUGAR-1KG\",\n \"DAL PAPAD HAND MADE-200GM\",\n \"SINDI-MASALA PAPAD-200 GM\",\n \"GRANDMAS-PAPPAD-250GM\",\n \"JAIPUR -MAKHANA-100GM\",\n \"KATOOMBA PAPADAM-100GM\",\n \"JAIPUR KOLHAPURI MUMRA 400g\",\n \"SHAPLA-PUFFED RICE-500GM\",\n \"SHANGRILA-GREEN CHILLI SAUCE-400GM\",\n \"HEMANI-NATURAL ROSE WATER-250ML\",\n \"DOUBLE HORSE-RED RICE FLAKES-500GM\",\n \"AHMED-PHENY-150 GM\",\n \"KNORR-SWEET CORN CHIKEN SOUP-42GM\",\n \"KNORR-ITALIAN MUSHROOM SOUP-48GM\",\n \"KALYAN-PANIPURI-30PCS\",\n \"PATTU-KOLHAPURI GOD-1KG\",\n \"PARSRAM -POOL MAKHANA-200GM\",\n \"SAURBHI-RICE FLAKE(POHA) THICK-1 KG\",\n \"MOTHERS-HOT AND SWEET 1 KG\",\n \"TELUGU-POHA MEDIUM-500GM\",\n \"TELUGU-POHA MEDIUM THICK -908GM\",\n \"ORGANIC TATTVA-ORGANIC POHA-500GM\",\n \"ORGANIC TATTVA-ORGANIC JAGGARI POWDER-500GM\",\n \"ORGANIC TATTVA-ORGANIC SUJI-500GM\",\n \"POTATA-JALI WAFER-400GM\",\n \"4 CORNER-PIPE FRYMS-200GM\",\n \"BIKANO-PAPAD AMRITSARI-200GM\",\n \"INDYA-POHA-THICK-1KG\",\n \"INDYA-POHA THICK-500GM\",\n \"UTTAM-RICE PUFF-800GM\",\n \"CHICKEN-FLAVERD POWDER-100GM\",\n \"SPARK-POHA THICK-500GM\",\n \"BANSI-MURMURA-400GM\",\n \"SPARK-SURTI MAMARA-650GM\",\n \"UTTAM-SOYA BUTTON-400GM\",\n \"DEEP-GREEN CHILLI PAPAD-200GM\",\n \"4-SAGO SEED BIG(SABUDANA)-1KG\",\n \"PATTU KOLAHAPUR GOR-500GM\",\n \"PARSRAM-PAUVA MEDIUM-500GM\",\n \"TSF-SABUDANA POHA-200GM\",\n \"UTTAM-RED JAGGERY-1.7 APPROX\",\n \"KITHUL-JAGGERY-500 GM\",\n \"IFF-VANILLA FLAVOUR-28ML\",\n \"STAR-ALMOND FLAVOUR-28ML\",\n \"STAR-ROSE FLAVOUR ESSENCE-28ML\",\n \"INDYA-PESI GUR-1 KG\",\n \"CHINGS-SWEET CORN SOUP-55GM\",\n \"UTTAM-SHAKKAR-1 KG\",\n \"UTTAM-SAGGO PAPAD COLOUR-200 GM\",\n \"TELUGU-RICE FLAKE(POHA) THICK-1 KG\",\n \"BAMBINO-VERMICELLI-400 GM\",\n \"SSD-SHAGUN ENVELOP (LIFAFA)-1 PC\",\n \"CHINGS-GREEN CHILLI SAUCE-425 GM\",\n \"CHINGS-RED CHILLI SAUCE-440 GM\",\n \"MAHARAJA CHOICE-PINEAPPLE ESSENCE-50 ML\",\n \"MOTHERS RECIPE-CHILLI GARLIC SAUCE-500 GM\",\n \"MAHARAJA CHOICE-ALMOND ESSENCE-50ML\",\n \"BLUE FOOD COLOUR\",\n \"MAHARAJAH CHOICE-MANGO ESSENCE-50ML\",\n \"MC-ORANGE FOOD COLOR-50ML\",\n \"MC-RICE FLAKES -500GM\",\n \"INDYA-SOYA WADI-400 GM\",\n \"PRAN-PUFFED RICE-500GM\",\n \"SAURBHI-LEMON YELLOW COLOUR-100 GM\",\n \"INDYA-RICE FLAKE(POHA)-500 GM\",\n \"BAMBINO-ROASTED VERMICILLI-800 GM\",\n \"BAMBINO-VERMICELLI-800G\",\n \"BAMBINO-450GM VERMICELLI-450 GM\",\n \"MTR-VERMICELLI-1KG\",\n \"COLORED VERMICELLI 2\",\n \"COLORED VERMICELLI 1\",\n \"BAKE PARLOR-HOT SOUR NOODLE SOUP-110GM\",\n \"MD-GREEN CHILLI SAUCE-400GM\",\n \"ARALIYA-SUGAR JAGGERY- 250 GM\",\n \"CHAKRA-SOYA WADI-500 GM\",\n \"ROYAL GOLD-POHA -500GM\",\n \"ROYANL GOLD-SABUDANA-1KG\",\n \"ROYAL GOLD-PESI GUR-900GM\",\n \"DELHI6-PANIPURI-400GM\",\n \"MAHARAJA CHOICE-ROSE ESSENCE-50 ML\",\n \"SMITH AND JONES-PERI PERI MIX-72 GM\",\n \"PATTU-TANDOORI COLOR-125GM\",\n \"MOTHERS-PUNJABI MASALA PAPADUM- 200GM\",\n \"OM SPICES-TOMATO SAUCE-500 GM\",\n \"4CORNER-RICE BUBBLE-400 GM\",\n \"AMMI SAMAYAL COUNTRY GOOD\",\n \"UTTAM-SABUDANA-1KG\",\n \"MAHARAJA CHOICE-GARLIC PAPADAM-100 GM\",\n \"UTTAM-RICE FLAKES(POHA) MEDIUM-500GM\",\n \"CHINGS-DARK SOYA SAUCE-210GM\",\n \"SPARK-SOYA BALLS-250GM\",\n \"ATUL-SOYA STICK-200 GM\",\n \"SPARK-KOHLAPURI JAGGERY-1 KG\",\n \"MAGGI-TOMATO KETCHUP-1 KG\",\n \"SAURBHI-SABUDANA-500 GM\",\n \"SAURBHI-SABUDANA-1KG\",\n \"INDYA-SOYA CHAAP-800 GM\",\n \"SAURABHI-PHOOL MAKHANA-100 GM\",\n \"SHAPLA-PUFFED RICE-500 GM\",\n \"UTTAM-RED JAGGERY-900 GM\",\n \"SAURBHI-JAGGERY-5 KG\",\n \"CHING'S-MANCHURIAN STIR FRY SAUCE-250GM\",\n \"SABRINI HOT AND SWEET SAUCE 1KG\",\n \"MAGGI-TOMATO SAUCE-500GM\",\n \"CHINGS GREEN CHILLI\",\n \"ADUKKALA JAGGARY-1KG\",\n \"NYLON SABUDANA-200GM\",\n \"TSF-SYA CHUNKS-200GM\",\n \"INDYA-JAGGERY BALLS-1KG\",\n \"MAGGI HOT AND SWEET-1LT\",\n \"MALABAR TREATS-KARIPETTY POWDER-400GM\",\n \"INDYA-JAGGARY CUBE\",\n \"INDYA-MAMARA-400GM\",\n \"SATVA-CORN MAMRA-300GM\",\n \"SATVA DESI JAGGARY-1KG\",\n \"SATVA JAGGARY POWDER-1KG\",\n \"INDYA- SOYA CHUNKS MINI-200GM\",\n \"SATVA POOL MAKHANA-200GM\",\n \"SPARK POHA THIN-1KG\",\n \"SPARK CHILLI-200GM\",\n \"SPARK BINGO TRIANGLE-200GM\",\n \"TSF-KOHLAPURI MUMRA-400GM\",\n \"TSF-BASMATI MAMRA-400 GM\",\n \"TSF-POHA MEDIUM-1KG\",\n \"DADAJI-CARDAMOM JAGGERY-500GM\"\n];\n\n// Clean the list once: trim spaces and make uppercase\nconst cleanList = alreadyUpdated.map(title => title.trim().toUpperCase());\n\nreturn items.filter(item => {\n  const sheetTitle = (item.json.title || \"\").toString().trim().toUpperCase();\n  \n  // Only keep items that are NOT in the cleanList\n  return !cleanList.includes(sheetTitle);\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1104,
+        1200
+      ],
+      "id": "7c8e0711-5cf7-4cdc-9b78-7cc11a18714f",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -256,
+        1552
+      ],
+      "id": "3b1e5123-ecd4-4b09-93a3-c32636f9e3bd",
+      "name": "Wait",
+      "webhookId": "c341ac14-4848-4210-b44e-79da68fb1d3c"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Use the $ prefix for the helper function\nconst data = $getWorkflowStaticData('global');\n\n// Initialize counter if missing\nif (data.departmentCounter === undefined) {\n  data.departmentCounter = 0;\n}\n\n// Increment counter\ndata.departmentCounter += 1;\n\nreturn [\n  {\n    counter: data.departmentCounter,\n    shouldWait: data.departmentCounter % 50 === 0\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1392,
+        2368
+      ],
+      "id": "74f4ba44-fa7c-4d1d-b9c5-bdf4e24b5905",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "510386ab-af92-468d-b9f4-ad46173b7fe0",
+              "leftValue": "={{ $json.shouldWait }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1648,
+        2512
+      ],
+      "id": "2fcdc1ef-e3c9-468b-b8db-4a78197de13e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1872,
+        2528
+      ],
+      "id": "b752db2f-0962-44ea-a926-4bfd900e2047",
+      "name": "Wait1",
+      "webhookId": "e4aa730d-32d1-4920-8370-6c8c77640eb3"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        2000
+      ],
+      "id": "feb9305d-47a6-4a8e-a93d-04693b0c26bb",
+      "name": "Wait2",
+      "webhookId": "792f2ab0-d86b-43ed-af9e-f78cecbb3dd8"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        2256
+      ],
+      "id": "8da66867-d752-4c27-a3fc-d07635971361",
+      "name": "Wait3",
+      "webhookId": "293bd31f-9f5f-444c-b933-916ef0220e79"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60",
+          "mode": "list",
+          "cachedResultName": "Apna Bazaar - Archived",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 136837035,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60/edit#gid=136837035"
+        },
+        "combineFilters": "OR",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1344,
+        1152
+      ],
+      "id": "0b211b00-0e18-4ba7-b031-ee516142da95",
+      "name": "Get row(s) in sheet",
+      "executeOnce": true
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Update a product",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a product": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {}
+    ]
+  },
+  "meta": {
+    "instanceId": "2c58655909a9a84f5a61ca2c475d4e91093d7e864dcc2d75a965330ca5507757"
+  }
+}
