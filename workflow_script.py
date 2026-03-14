@@ -17,7 +17,7 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 
-INPUT_FILE = 'input_script.js'
+INPUT_FILE = 'atta_products.json'
 PROCESSED_LOG_CSV = 'processed_products_log.csv'
 
 SHOPIFY_GRAPHQL_URL = f"{SHOPIFY_SHOP_URL.rstrip('/')}/admin/api/2024-07/graphql.json"
