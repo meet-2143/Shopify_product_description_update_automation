@@ -324,7 +324,7 @@
             <div class="comparison-grid">
                 <!-- AI Side -->
                 <div class="side-card" id="ai-side" onclick="selectSource('ai')">
-                    <div class="side-label">AI Generated (Gemini 2.5 Flash) ✨</div>
+                    <div class="side-label">AI Generated (Gemini 3 Flash) ✨</div>
                     <div class="image-container">
                         <div id="ai-shimmer" class="shimmer" style="display: none;"></div>
                         <div id="ai-placeholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 1rem;">
@@ -571,6 +571,11 @@
                 
                 showToast('Shopify updated successfully!');
                 elements.totalApp.innerText = data.stats.total_approved;
+                
+                // Refresh the page to get back to initial blank form after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } catch (e) {
                 showToast(e.message, 'error');
             } finally {
