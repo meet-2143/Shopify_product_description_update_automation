@@ -18,18 +18,9 @@ from supabase import create_client, Client
 # -----------------------------------------------------------------------------
 # Configuration & Setup
 # -----------------------------------------------------------------------------
-# Load environment variables
-env_paths = [
-    os.path.join(os.path.dirname(__file__), '..', 'Desc_workflow', '.env'),
-    os.path.join(os.path.dirname(__file__), '.env'),
-    os.path.join(os.getcwd(), '.env'),
-    os.path.join(os.getcwd(), '..', 'Desc_workflow', '.env')
-]
-
-for p in env_paths:
-    if os.path.exists(p):
-        load_dotenv(p, override=True)
-        # print(f"DEBUG: Loaded env from {p}")
+# Load environment variables from Desc_workflow or current directory
+load_dotenv(os.path.join(os.path.dirname(__file__), '..', 'Desc_workflow', '.env'))
+load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 SHOPIFY_SHOP_URL = os.getenv("SHOPIFY_SHOP_URL")
@@ -186,30 +177,24 @@ Format:
             "Clean white background, high resolution, single product, studio lighting.",
         )
 
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                # Using the exact structure provided by the user
-                response = self.genai_client.models.generate_content(
-                    model="gemini-3.1-flash-image-preview",
-                    contents=full_prompt,
-                )
+        try:
+            # Using the exact structure provided by the user
+            response = self.genai_client.models.generate_content(
+                model="gemini-3.1-flash-image-preview",
+                contents=full_prompt,
+            )
 
-                import base64
-                for part in response.parts:
-                    # Based on the user's snippet structure
-                    if part.inline_data is not None:
-                        # Return base64 for preview
-                        return base64.b64encode(part.inline_data.data).decode('utf-8')
-                
-                return ""
-            except Exception as e:
-                print(f"Error generating with Gemini 3.1 SDK (attempt {attempt+1}/{max_retries}): {e}")
-                if "503" in str(e) or "429" in str(e):
-                    time.sleep(2 * (attempt + 1))
-                    continue
-                break
-        return ""
+            import base64
+            for part in response.parts:
+                # Based on the user's snippet structure
+                if part.inline_data is not None:
+                    # Return base64 for preview
+                    return base64.b64encode(part.inline_data.data).decode('utf-8')
+            
+            return ""
+        except Exception as e:
+            print(f"Error generating with Gemini 3.1 SDK: {e}")
+            return ""
 
     def host_image_in_supabase(self, base64_data: str, product_id: str, product_name: str) -> str:
         """Hosts an AI image in Supabase storage and returns the public URL."""
@@ -289,39 +274,6 @@ Format:
             if hasattr(e, 'response') and e.response is not None:
                 print(f"  Response: {e.response.text}")
             return False
-
-    def find_shopify_product_by_name(self, product_name: str) -> str:
-        """Searches Shopify for a product by title and returns its ID."""
-        shop_url = SHOPIFY_SHOP_URL.rstrip('/')
-        url = f"{shop_url}/admin/api/2024-01/products.json"
-        
-        headers = {
-            "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
-            "Content-Type": "application/json"
-        }
-        
-        params = {
-            "title": product_name
-        }
-
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                response = self.session.get(url, headers=headers, params=params, timeout=45)
-                response.raise_for_status()
-                products = response.json().get('products', [])
-                
-                if products:
-                    # Return the ID of the first match
-                    return str(products[0]['id'])
-                return None
-            except Exception as e:
-                print(f"  Error searching Shopify for '{product_name}' (attempt {attempt+1}/{max_retries}): {e}")
-                if attempt < max_retries - 1:
-                    time.sleep(2)
-                    continue
-                return None
-        return None
 
     def archive_entry_to_sheet(self, title: str, department: str):
         """Replicates 'Append row in sheet' node from n8n."""

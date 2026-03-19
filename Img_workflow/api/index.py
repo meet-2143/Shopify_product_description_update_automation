@@ -2,18 +2,17 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 import os
 import json
 import sys
+from typing import Union, Any
 
-# Add parent directory to path so we can import root image_workflow
-ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
-if ROOT_DIR not in sys.path:
-    sys.path.insert(0, ROOT_DIR)
-
-from image_workflow import ImageWorkflowProcessor, GEMINI_API_KEY
-print(f"DEBUG: Loaded root image_workflow. GEMINI_API_KEY present: {GEMINI_API_KEY is not None}")
+# Add parent directory to path so we can import image_workflow
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+from image_workflow import ImageWorkflowProcessor, SHOPIFY_SHOP_URL, SHOPIFY_ACCESS_TOKEN
+import requests
+from concurrent.futures import ThreadPoolExecutor
 
 app = FastAPI()
 
@@ -27,6 +26,7 @@ app.add_middleware(
 )
 
 processor = ImageWorkflowProcessor()
+executor = ThreadPoolExecutor(max_workers=5)
 
 STATS_FILE = os.path.join(os.path.dirname(__file__), "..", "stats.json")
 
@@ -49,18 +49,43 @@ def update_stats(generated=0, approved=0):
     except:
         pass # Vercel functions are read-only except for /tmp, so this might fail in lambda
 
+def search_product(title):
+    url = f"{SHOPIFY_SHOP_URL}/admin/api/2024-01/products.json"
+    headers = {
+        "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
+        "Content-Type": "application/json"
+    }
+    params = {
+        "title": title
+    }
+    try:
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        if response.status_code == 200:
+            products = response.json().get('products', [])
+            return products[0] if products else None
+        else:
+            print(f"Error searching Shopify: {response.status_code} - {response.text}")
+            return None
+    except Exception as e:
+        print(f"Exception searching Shopify: {e}")
+        return None
 
 class GenerateRequest(BaseModel):
     product_name: str
 
 class ApproveRequest(BaseModel):
-    product_id: str
+    product_id: Any
     product_name: str = ""
     image_url: str
     is_base64: bool = False
 
+    @field_validator('product_id', mode='before')
+    @classmethod
+    def ensure_string(cls, v):
+        return str(v)
+
 @app.get("/", response_class=HTMLResponse)
-async def read_index():
+def read_index():
     index_path = os.path.join(os.path.dirname(__file__), "..", "static", "index.html")
     if os.path.exists(index_path):
         with open(index_path, "r", encoding="utf-8") as f:
@@ -68,26 +93,34 @@ async def read_index():
     return "index.html not found"
 
 @app.get("/api/stats")
-async def get_all_stats():
+def get_all_stats():
     return get_stats()
 
 @app.post("/api/generate")
-async def generate_images(request: GenerateRequest):
-    params = processor.get_ai_search_params(request.product_name)
+def generate_images(request: GenerateRequest):
+    # 1. Run Search Query generation and Shopify search in parallel
+    with ThreadPoolExecutor() as exe:
+        future_params = exe.submit(processor.get_ai_search_params, request.product_name)
+        future_shopify = exe.submit(search_product, request.product_name)
+        
+        params = future_params.result()
+        found_res = future_shopify.result()
+
     if not params:
         raise HTTPException(status_code=500, detail="Gemini failed to generate search query")
     
-    # 2. Get product product_id from Shopify search
-    found_id = processor.find_shopify_product_by_name(request.product_name)
+    found_id = found_res['id'] if found_res else None
+    if not found_id:
+        print(f"  Warning: Product '{request.product_name}' not found in Shopify.")
+
+    # 2. Run SerpAPI search
+    with ThreadPoolExecutor() as exe:
+        future_serp = exe.submit(processor.fetch_images_from_serpapi, params['search_query'])
+        images = future_serp.result()
     
-    # 3. Get image list from SerpAPI
-    images = processor.fetch_images_from_serpapi(params['search_query'])
-    
-    # 4. Generate AI image with Gemini 2.5 Pro / Imagen
-    ai_image = processor.generate_ai_image(request.product_name)
-    
-    if not images and not ai_image:
-        raise HTTPException(status_code=500, detail="Failed to find or generate any images")
+    if not images:
+        # We don't fail here if no images are found, as the user might want to generate AI image later
+        print(f"  Warning: No search images found for '{request.product_name}'")
     
     update_stats(generated=1)
     
@@ -95,13 +128,23 @@ async def generate_images(request: GenerateRequest):
         "title": params['title'],
         "search_query": params['search_query'],
         "images": images,
-        "ai_image": ai_image,
         "product_id": found_id,
         "stats": get_stats()
     }
 
+@app.post("/api/generate-ai")
+def generate_ai(request: GenerateRequest):
+    # This only generates the AI image
+    ai_image = processor.generate_ai_image(request.product_name)
+    if not ai_image:
+        raise HTTPException(status_code=500, detail="Gemini failed to generate AI image")
+    
+    return {
+        "ai_image": ai_image
+    }
+
 @app.post("/api/approve")
-async def approve_image(request: ApproveRequest):
+def approve_image(request: ApproveRequest):
     try:
         final_image_source = request.image_url
         final_is_base64 = request.is_base64

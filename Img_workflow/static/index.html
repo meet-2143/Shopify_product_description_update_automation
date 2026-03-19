@@ -57,6 +57,7 @@
             margin-bottom: 0.5rem;
             background: linear-gradient(to right, #a78bfa, #60a5fa);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -304,9 +305,14 @@
                 <input type="text" id="product_name" placeholder="Enter product name (e.g. PATANJALI-DAMRU GLASS-400ML)">
             </div>
 
-            <button id="btn-generate" class="btn-primary">
-                <span id="gen-text">Generate Options</span>
-            </button>
+            <div style="display: flex; gap: 1rem;">
+                <button id="btn-generate" class="btn-primary" style="flex: 1;">
+                    <span id="gen-text">Generate Options</span>
+                </button>
+                <button id="btn-generate-ai" class="btn-primary" style="flex: 1; display: none; background: var(--primary);">
+                    <span id="gen-ai-text">Generate AI Image</span>
+                </button>
+            </div>
         </div>
 
         <div id="result-section" class="card">
@@ -317,15 +323,16 @@
 
             <div class="comparison-grid">
                 <!-- AI Side -->
-                <div class="side-card selected" id="ai-side" onclick="selectSource('ai')">
-                    <div class="side-label">AI Generated (Gemini 3 Pro Preview) 🍌</div>
+                <div class="side-card" id="ai-side" onclick="selectSource('ai')">
+                    <div class="side-label">AI Generated (Gemini 2.5 Flash) ✨</div>
                     <div class="image-container">
-                        <div id="ai-shimmer" class="shimmer" style="display:none;"></div>
-                        <img id="ai-img" alt="AI Generated product image">
+                        <div id="ai-shimmer" class="shimmer" style="display: none;"></div>
+                        <div id="ai-placeholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 1rem;">
+                            Click "Generate AI Image" above to create an AI version
+                        </div>
+                        <img id="ai-img" src="" alt="AI Generated" style="display: none;">
                     </div>
-                    <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted); text-align: center;">
-                        Custom created for this product
-                    </div>
+                    <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">Custom created for this product</div>
                 </div>
 
                 <!-- Search Side -->
@@ -378,6 +385,9 @@
             aiSide: document.getElementById('ai-side'),
             foundTitle: document.getElementById('found-title'),
             displayId: document.getElementById('display-id'),
+            btnGenerateAi: document.getElementById('btn-generate-ai'),
+            genAiText: document.getElementById('gen-ai-text'),
+            aiPlaceholder: document.getElementById('ai-placeholder'),
             currentIdx: document.getElementById('current-idx'),
             totalCount: document.getElementById('total-count'),
             btnPrev: document.getElementById('btn-prev'),
@@ -431,6 +441,14 @@
         }
         fetchInitialStats();
 
+        // Helper to reset AI view
+        function resetAiView() {
+            elements.aiImg.style.display = 'none';
+            elements.aiPlaceholder.style.display = 'flex';
+            elements.aiShimmer.style.display = 'none';
+            currentState.aiImage = null;
+        }
+
         elements.btnGenerate.onclick = async () => {
             const name = elements.productName.value.trim();
             if (!name) return showToast('Please enter a product name', 'error');
@@ -439,6 +457,11 @@
             document.getElementById('gen-text').innerText = 'Thinking...';
             
             try {
+                // Clear previous results
+                resetAiView();
+                elements.btnGenerateAi.style.display = 'none';
+                elements.resultSection.style.display = 'none';
+
                 const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -447,27 +470,64 @@
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.detail || 'Generation failed');
 
-                currentState.images = data.images;
-                currentState.aiImage = data.ai_image;
+                currentState.images = data.images || [];
                 currentState.currentIndex = 0;
                 currentState.productId = data.product_id;
 
                 elements.foundTitle.innerText = data.title;
                 elements.displayId.innerText = data.product_id || 'NOT FOUND';
                 
-                if (data.ai_image) {
-                    elements.aiImg.src = 'data:image/png;base64,' + data.ai_image;
-                    selectSource('ai');
+                elements.resultSection.style.display = 'flex';
+                elements.btnGenerateAi.style.display = 'block';
+                
+                if (currentState.images.length > 0) {
+                    selectSource('search');
+                    updateImageDisplay();
+                } else {
+                    elements.previewImg.style.display = 'none';
+                    elements.totalCount.innerText = '0';
+                    elements.currentIdx.innerText = '0';
+                    showToast('No search images found. Try Generating AI Image.', 'warning');
                 }
                 
-                elements.resultSection.style.display = 'flex';
-                updateImageDisplay();
-                showToast('AI and Search results ready!');
+                showToast('Search results ready!');
             } catch (e) {
                 showToast(e.message, 'error');
             } finally {
                 elements.btnGenerate.disabled = false;
                 document.getElementById('gen-text').innerText = 'Generate Options';
+            }
+        };
+
+        elements.btnGenerateAi.onclick = async () => {
+            const name = elements.productName.value.trim();
+            elements.btnGenerateAi.disabled = true;
+            elements.genAiText.innerText = 'Generating...';
+            elements.aiPlaceholder.style.display = 'none';
+            elements.aiShimmer.style.display = 'block';
+
+            try {
+                const response = await fetch('/api/generate-ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_name: name })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || 'AI Generation failed');
+
+                currentState.aiImage = data.ai_image;
+                elements.aiImg.src = 'data:image/png;base64,' + data.ai_image;
+                elements.aiImg.style.display = 'block';
+                elements.aiShimmer.style.display = 'none';
+                selectSource('ai');
+                showToast('AI Image generated!');
+            } catch (e) {
+                showToast(e.message, 'error');
+                elements.aiPlaceholder.style.display = 'flex';
+                elements.aiShimmer.style.display = 'none';
+            } finally {
+                elements.btnGenerateAi.disabled = false;
+                elements.genAiText.innerText = 'Generate AI Image';
             }
         };
 
