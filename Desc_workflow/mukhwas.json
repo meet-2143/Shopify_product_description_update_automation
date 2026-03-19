@@ -1,0 +1,64 @@
+[
+  {
+    "finalEmptyProductCount": 14,
+    "finalTotalProducts": 101,
+    "emptyProductsList": [
+      {
+        "id": "9057407303906",
+        "title": "DELHI 6-KASHMIRI CHERRY GLAZED-200GM"
+      },
+      {
+        "id": "9081094734050",
+        "title": "GANJANAD-MUKHWAS GUJARATI-200GM"
+      },
+      {
+        "id": "9081097421026",
+        "title": "DELHI 6-AMLA CANDY SWEET-300GM"
+      },
+      {
+        "id": "9081099124962",
+        "title": "DELHI 6-RAM LADOO-300GM"
+      },
+      {
+        "id": "9081208635618",
+        "title": "SPARK-SUPARI WHOLE-11PCS"
+      },
+      {
+        "id": "9081253003490",
+        "title": "GAJANAND-MUHKWAS RED-200GM"
+      },
+      {
+        "id": "9081262768354",
+        "title": "UTTAM MINT FENNEL MUKHWAS 175g"
+      },
+      {
+        "id": "9082080854242",
+        "title": "LATA'S KITCHEN-GOLMAAL PAAN-250GM"
+      },
+      {
+        "id": "9100092997858",
+        "title": "SPARK-SUGAR COATED FENNELS-200GM"
+      },
+      {
+        "id": "9106631164130",
+        "title": "TUSLI-CLASSIC JAR-100GM"
+      },
+      {
+        "id": "9106634014946",
+        "title": "HILAL-PANBAHAR-24PCS"
+      },
+      {
+        "id": "9113108414690",
+        "title": "UTTA,-GULAB MUKHWAS-180GM"
+      },
+      {
+        "id": "9113108447458",
+        "title": "UTTAM-KASHMIRI MIX MUKHWAS-200GM"
+      },
+      {
+        "id": "9113108512994",
+        "title": "UTTAM-GUJARATI MUKHWAS-125GM"
+      }
+    ]
+  }
+]

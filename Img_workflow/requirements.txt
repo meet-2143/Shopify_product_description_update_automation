@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pandas
+openpyxl
+requests
+python-dotenv
+gspread
+google-genai
+Pillow
+supabase

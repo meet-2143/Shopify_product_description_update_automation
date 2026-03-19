@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Workflow - Smart Product Update</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
+
+        input {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Result Section */
+        #result-section {
+            display: none;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .side-card {
+            background: rgba(15, 23, 42, 0.3);
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .side-card.selected {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+        }
+
+        .side-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .side-card.selected .side-label {
+            color: var(--primary);
+        }
+
+        .image-container {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .shimmer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border: 1px solid var(--glass-border);
+            flex: 1;
+            font-size: 0.85rem;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
+        }
+
+        .pagination {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+
+        #toast.show { transform: translateY(0); }
+
+        .footer {
+            margin-top: auto;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 2rem 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Workflow</h1>
+            <p class="subtitle">Search and Generate Product Images with Gemini 2.5 Pro</p>
+        </header>
+
+        <div class="card">
+            <div id="stats-bar" style="display: flex; gap: 1rem; margin-bottom: 2rem; font-size: 0.85rem; color: var(--text-muted);">
+                <div class="stat-item">Total Images: <span id="total-gen" style="color: var(--primary); font-weight: 600;">0</span></div>
+                <div class="stat-item">Shopify Updates: <span id="total-app" style="color: var(--success); font-weight: 600;">0</span></div>
+            </div>
+            
+            <div class="field" style="margin-bottom: 1.5rem;">
+                <label for="product_name">Product Name</label>
+                <input type="text" id="product_name" placeholder="Enter product name (e.g. PATANJALI-DAMRU GLASS-400ML)">
+            </div>
+
+            <button id="btn-generate" class="btn-primary">
+                <span id="gen-text">Generate Options</span>
+            </button>
+        </div>
+
+        <div id="result-section" class="card">
+            <div id="product-meta" style="text-align: center; margin-bottom: 1rem;">
+                <div id="found-title" style="font-weight: 600; color: var(--primary); font-size: 1.2rem;"></div>
+                <div id="found-id" style="font-size: 0.85rem; color: var(--text-muted);">ID: <span id="display-id"></span></div>
+            </div>
+
+            <div class="comparison-grid">
+                <!-- AI Side -->
+                <div class="side-card selected" id="ai-side" onclick="selectSource('ai')">
+                    <div class="side-label">AI Generated (Gemini 3 Pro Preview) 🍌</div>
+                    <div class="image-container">
+                        <div id="ai-shimmer" class="shimmer" style="display:none;"></div>
+                        <img id="ai-img" alt="AI Generated product image">
+                    </div>
+                    <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted); text-align: center;">
+                        Custom created for this product
+                    </div>
+                </div>
+
+                <!-- Search Side -->
+                <div class="side-card" id="search-side" onclick="selectSource('search')">
+                    <div class="side-label">Found Online (SerpAPI)</div>
+                    <div class="pagination">Image <span id="current-idx">1</span> of <span id="total-count">0</span></div>
+                    <div class="image-container">
+                        <div id="img-shimmer" class="shimmer"></div>
+                        <img id="preview-img" alt="Search result">
+                    </div>
+                    <div class="controls">
+                        <button id="btn-prev" class="btn-secondary">Prev</button>
+                        <button id="btn-next" class="btn-secondary">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-approve" class="btn-success">
+                Approve & Update Shopify
+            </button>
+        </div>
+    </div>
+
+    <div id="toast">
+        <span id="toast-msg"></span>
+    </div>
+
+    <footer class="footer">
+        Powered by Gemini 2.5 Pro & Imagen 3 &bull; Apna Indian Bazaar Suite
+    </footer>
+
+    <script>
+        let currentState = {
+            images: [],
+            aiImage: null,
+            currentIndex: 0,
+            productId: null,
+            selectedSource: 'ai'
+        };
+
+        const elements = {
+            productName: document.getElementById('product_name'),
+            btnGenerate: document.getElementById('btn-generate'),
+            resultSection: document.getElementById('result-section'),
+            previewImg: document.getElementById('preview-img'),
+            aiImg: document.getElementById('ai-img'),
+            imgShimmer: document.getElementById('img-shimmer'),
+            aiShimmer: document.getElementById('ai-shimmer'),
+            searchSide: document.getElementById('search-side'),
+            aiSide: document.getElementById('ai-side'),
+            foundTitle: document.getElementById('found-title'),
+            displayId: document.getElementById('display-id'),
+            currentIdx: document.getElementById('current-idx'),
+            totalCount: document.getElementById('total-count'),
+            btnPrev: document.getElementById('btn-prev'),
+            btnNext: document.getElementById('btn-next'),
+            btnApprove: document.getElementById('btn-approve'),
+            toast: document.getElementById('toast'),
+            toastMsg: document.getElementById('toast-msg'),
+            totalGen: document.getElementById('total-gen'),
+            totalApp: document.getElementById('total-app')
+        };
+
+        function showToast(message, type = 'success') {
+            elements.toastMsg.innerText = message;
+            elements.toast.style.borderColor = type === 'success' ? 'var(--success)' : 'var(--error)';
+            elements.toast.classList.add('show');
+            setTimeout(() => elements.toast.classList.remove('show'), 3000);
+        }
+
+        function selectSource(source) {
+            currentState.selectedSource = source;
+            if (source === 'ai') {
+                elements.aiSide.classList.add('selected');
+                elements.searchSide.classList.remove('selected');
+            } else {
+                elements.searchSide.classList.add('selected');
+                elements.aiSide.classList.remove('selected');
+            }
+        }
+
+        function updateImageDisplay() {
+            if (currentState.images.length === 0) return;
+            const url = currentState.images[currentState.currentIndex];
+            elements.previewImg.style.display = 'none';
+            elements.imgShimmer.style.display = 'block';
+            elements.previewImg.src = url;
+            elements.previewImg.onload = () => {
+                elements.imgShimmer.style.display = 'none';
+                elements.previewImg.style.display = 'block';
+            };
+            elements.currentIdx.innerText = currentState.currentIndex + 1;
+            elements.totalCount.innerText = currentState.images.length;
+        }
+
+        async function fetchInitialStats() {
+            try {
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                elements.totalGen.innerText = data.total_generated;
+                elements.totalApp.innerText = data.total_approved;
+            } catch (e) {}
+        }
+        fetchInitialStats();
+
+        elements.btnGenerate.onclick = async () => {
+            const name = elements.productName.value.trim();
+            if (!name) return showToast('Please enter a product name', 'error');
+
+            elements.btnGenerate.disabled = true;
+            document.getElementById('gen-text').innerText = 'Thinking...';
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_name: name })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || 'Generation failed');
+
+                currentState.images = data.images;
+                currentState.aiImage = data.ai_image;
+                currentState.currentIndex = 0;
+                currentState.productId = data.product_id;
+
+                elements.foundTitle.innerText = data.title;
+                elements.displayId.innerText = data.product_id || 'NOT FOUND';
+                
+                if (data.ai_image) {
+                    elements.aiImg.src = 'data:image/png;base64,' + data.ai_image;
+                    selectSource('ai');
+                }
+                
+                elements.resultSection.style.display = 'flex';
+                updateImageDisplay();
+                showToast('AI and Search results ready!');
+            } catch (e) {
+                showToast(e.message, 'error');
+            } finally {
+                elements.btnGenerate.disabled = false;
+                document.getElementById('gen-text').innerText = 'Generate Options';
+            }
+        };
+
+        elements.btnNext.onclick = (e) => {
+            e.stopPropagation();
+            if (currentState.currentIndex < currentState.images.length - 1) {
+                currentState.currentIndex++;
+                updateImageDisplay();
+            }
+        };
+
+        elements.btnPrev.onclick = (e) => {
+            e.stopPropagation();
+            if (currentState.currentIndex > 0) {
+                currentState.currentIndex--;
+                updateImageDisplay();
+            }
+        };
+
+        elements.btnApprove.onclick = async () => {
+            if (!currentState.productId) return showToast('No product ID found!', 'error');
+
+            elements.btnApprove.disabled = true;
+            elements.btnApprove.innerText = 'Updating Shopify...';
+
+            const payload = {
+                product_id: currentState.productId,
+                product_name: elements.foundTitle.innerText,
+                image_url: currentState.selectedSource === 'ai' ? currentState.aiImage : currentState.images[currentState.currentIndex],
+                is_base64: currentState.selectedSource === 'ai'
+            };
+
+            try {
+                const response = await fetch('/api/approve', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || 'Update failed');
+                
+                showToast('Shopify updated successfully!');
+                elements.totalApp.innerText = data.stats.total_approved;
+            } catch (e) {
+                showToast(e.message, 'error');
+            } finally {
+                elements.btnApprove.disabled = false;
+                elements.btnApprove.innerText = 'Approve & Update Shopify';
+            }
+        };
+    </script>
+</body>
+</html>

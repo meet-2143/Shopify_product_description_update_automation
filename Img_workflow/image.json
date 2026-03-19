@@ -1,0 +1,521 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Get the raw text from the AI Agent\nlet rawOutput = items[0].json.output;\n\n// Clean up markdown\nrawOutput = rawOutput.replace(/```json/g, \"\").replace(/```/g, \"\").trim();\n\ntry {\n  const parsed = JSON.parse(rawOutput);\n  const variant = parsed.variant;\n  let query = variant.search_query;\n// Remove any special characters that might confuse an image search\nquery = query.replace(/[^\\w\\s]/gi, ' ');\n\n  if (!variant) {\n    throw new Error(\"No variant found in AI response\");\n  }\n\n  // Return only ONE item to the HTTP Request node\n  return [{\n    json: {\n      title: variant.title,\n      search_query: variant.search_query\n    }\n  }];\n} catch (error) {\n  throw new Error(\"AI did not return valid JSON. Output: \" + rawOutput);\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2336,
+        528
+      ],
+      "id": "12a496eb-88c5-42e2-9e24-0d9a4224388f",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.search_query }}"
+            },
+            {
+              "name": "api_key",
+              "value": "41966b0261f39b292bd367b18d5604642586ae7b978562aa6710ae2b9fabfb78"
+            },
+            {
+              "name": "engine",
+              "value": "google_images"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2608,
+        576
+      ],
+      "id": "abc05f68-7326-4def-bb37-a9c4b4ed13f1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// // We only want the absolute first result from the SerpApi response\n// const firstResult = items[0].json.images_results?.[0];\n\n// if (!firstResult) {\n//   return [{ text: \"Sorry, I couldn't find a clear image for this product.\" }];\n// }\n\n// const title = items[0].json.search_parameters?.q || \"Product\";\n// const imageUrl = firstResult.original;\n\n// // Clean Markdown format for a single image\n// let message = `### 🛒 Found Product\\n\\n`;\n// message += `**${title}**\\n\\n`;\n// message += `![${title}](${imageUrl})`;\n\n// return [{ text: message }];\n\n\n// // Get first image\nconst firstResult = items[0].json.images_results?.[0];\n\nif (!firstResult) {\n  throw new Error(\"No image found from SerpAPI\");\n}\n\nreturn [\n  {\n    json: {\n      imageUrl: firstResult.original\n    }\n  }\n];\n\n\n// // Get first incoming item\n// const inputItem = $input.first().json;\n\n// // Access images_results safely\n// const firstResult = inputItem.images_results?.[0];\n\n// if (!firstResult) {\n//   throw new Error(\"No image found from SerpAPI\");\n// }\n\n// return [\n//   {\n//     json: {\n//       imageUrl: firstResult.original\n//     }\n//   }\n// ];\n\n\n\n// // Check if the previous node (HTTP Request) actually returned results\n// const results = items[0].json.images_results;\n\n// if (!results || results.length === 0) {\n//   // Return a 'skipped' status instead of crashing\n//   return [{\n//     json: {\n//       imageUrl: null,\n//       error: \"No image found\",\n//       status: \"skipped\"\n//     }\n//   }];\n// }\n\n// // Get the first result\n// const firstResult = results[0];\n\n// return [{\n//   json: {\n//     imageUrl: firstResult.original,\n//     status: \"success\"\n//   }\n// }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2848,
+        656
+      ],
+      "id": "1ef38926-1acc-48b6-baf5-1be9acbc5bc0",
+      "name": "Code in JavaScript1",
+      "retryOnFail": false,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        672
+      ],
+      "id": "5842203c-70b4-4c19-bd56-cd3591ce96c3",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.title }}",
+        "options": {
+          "systemMessage": "=You are an Indian grocery e-commerce assistant.\nFrom the user's input, identify the specific grocery product. \n\nThe product can belong to:\n\n- Grocery (food, beverages, staples, snacks, dairy, etc.)\n\n- Home Care (detergents, cleaners, dishwash, toilet cleaner, floor cleaner, etc.)\n\n- Kitchen Expenditure (kitchen utilities & consumables such as aluminium foil, cling wrap, butter paper, tissue paper, garbage bags, scrubbers, storage bags, matchbox, candles, etc.)\n\n- Religious & Pooja Items\n(agarbatti/incense sticks, dhoop, sambrani, camphor/kapoor, diya, oil for lamps, pooja samagri kits, ghee for pooja, havan samagri, cotton wicks, sacred powders, etc.)\n\nHome & Decor / Pooja Accessories (Non-Consumable)\n(brass bowls, pooja thali, diya, kalash, idols, decorative utensils, lamps, metal décor items)\nReturn ONLY a raw JSON object with a single best-match variant.\nThe search_query must be optimized for Google Images to find a clean product shot. \nInclude keywords like \"product packaging\", \"white background\", and \"high resolution\".\n\nFormat:\n{\n  \"product\": \"name\",\n  \"variant\": {\n      \"title\": \"Brand + Variant + Weight\",\n      \"search_query\": \"Exact Brand Name Product Packaging white background\"\n  }\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1920,
+        480
+      ],
+      "id": "6fcbb7d1-b73d-4b54-8386-e0f7423ea532",
+      "name": "AI Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "732fdb92-4495-4eeb-bc7c-b4404c1e0fd0",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "accessToken",
+        "resource": "product",
+        "operation": "update",
+        "productId": "={{ $node[\"Loop Over Items\"].json.id }}",
+        "updateFields": {
+          "images": [
+            {
+              "src": "={{ $json.imageUrl }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        3120,
+        720
+      ],
+      "id": "2b8085c9-5c14-4d31-ae55-c7a0fa7df50f",
+      "name": "Update a product"
+    },
+    {
+      "parameters": {
+        "authentication": "accessToken",
+        "resource": "product",
+        "operation": "getAll",
+        "limit": 250,
+        "additionalFields": {
+          "product_type": "DRINK-MIX / SYRUPS / TEA"
+        }
+      },
+      "type": "n8n-nodes-base.shopify",
+      "typeVersion": 1,
+      "position": [
+        416,
+        608
+      ],
+      "id": "5b6af49b-4ced-4063-b332-f8ef0d4b19cb",
+      "name": "Get many products"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1120,
+        224
+      ],
+      "id": "f8018c88-f1bf-4a3a-887c-b2d8c4ae7e75",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c5c4ea3c-11e9-4a36-b686-e446c2fa466d",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "active",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1376,
+        368
+      ],
+      "id": "44d029b5-618c-45b5-96b0-dad2eb243acc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60",
+          "mode": "list",
+          "cachedResultName": "Apna Bazaar - Archived",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 761581195,
+          "mode": "list",
+          "cachedResultName": "Sheet9",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AY9029F_0KUvuKisJdYb-rr0yjjVBr6r9jyCGkfyk60/edit#gid=761581195"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Product Name": "={{ $json.title }}",
+            "Department": "={{ $json.product_type }}"
+          },
+          "matchingColumns": [
+            "Product Name"
+          ],
+          "schema": [
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Product Name",
+              "displayName": "Product Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3408,
+        864
+      ],
+      "id": "a957f2f2-bd1c-418e-b594-3ae08ee558df",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "amount": 4
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1696,
+        400
+      ],
+      "id": "f8d5902f-07e4-4dbe-a4ed-3b4713731d52",
+      "name": "Wait",
+      "webhookId": "4aa807a4-2d0c-4fe6-be91-37fbf32750af"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3696,
+        1008
+      ],
+      "id": "e2e78c58-e6d6-498a-b3ab-db71ba391da3",
+      "name": "Wait1",
+      "webhookId": "0df06a18-5113-4dec-b0d5-ce7ae9bcd946"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1FRFIE2Lduhf8jvUheto65dwkdwedKu0FOT-DrgvAwHQ",
+          "mode": "list",
+          "cachedResultName": "Testing",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FRFIE2Lduhf8jvUheto65dwkdwedKu0FOT-DrgvAwHQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 784261537,
+          "mode": "list",
+          "cachedResultName": "Sheet3",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FRFIE2Lduhf8jvUheto65dwkdwedKu0FOT-DrgvAwHQ/edit#gid=784261537"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "productType",
+              "lookupValue": "KITCHEN EXPENDITURE"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        0
+      ],
+      "id": "318e6d8a-5fa2-4926-8b67-f6c50e74a157",
+      "name": "Get row(s) in sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Updated list: Pickles, Chutneys & Pastes\nconst alreadyUpdated = [\n  \"PREETHI-ZODIAC MIXER GRINDER\",\n  \"PREETHI-BLUE LEAF MIXES PLATINUM\",\n  \"WOODEN-FORK-100 GM\",\n  \"PATANJALI-DAMRU GLASS-400ML\",\n  \"PITAMBARI-50GM\",\n  \"IRON KADAI NO 2\",\n  \"IRON KADAI NO 10\",\n  \"SAUCE PAN\",\n  \"SANDSI PAKAD\",\n  \"LADDAL PAN 5\",\n  \"FUTURA-3TO7 LT RING\",\n  \"FUTURA-PRESSURE COOKER-5 LITRE\",\n  \"MASTER-CHEF SAUCEPAN-2 LITRE\",\n  \"FUTURA-KADAHI-26 CM\",\n  \"MILTON-THERMOWARE INSULATED CASSEROLE-1500ML\",\n  \"BELON NO 4 GUJRATI\",\n  \"SONEX- MILK PAN- NO.9\",\n  \"FUTURA -HANDI SAUCEPAN - 3 LT\",\n  \"FUTURA-TAVA GRIDDLE-26CM\",\n  \"FUTURA-DEEP FRY PAN-7.5LTR\",\n  \"FUTURA-TAVA-26CM\",\n  \"FUTURA-DOSA TAVA-33CM\",\n  \"FUTURA-FLAT TAVA INDUCTION-30CM\",\n  \"PITAMBARI-SHINING POWDER-150G\",\n  \"COSTCO\"\n];\n\nconst cleanList = alreadyUpdated.map(title =>\n  title.trim().toUpperCase()\n);\n\nreturn items.filter(item => {\n  const sheetTitle = (item.json.title || \"\")\n    .toString()\n    .trim()\n    .toUpperCase();\n\n  return !cleanList.includes(sheetTitle);\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        528,
+        0
+      ],
+      "id": "e771140d-61da-40d4-b2bd-c9f99ab736c7",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3328,
+        608
+      ],
+      "id": "da16389f-54f4-4996-86f3-cbb5d3e2db2d",
+      "name": "Wait2",
+      "webhookId": "ede84074-24d3-4970-a21c-9347a7d8b82f"
+    }
+  ],
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Update a product",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a product": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {}
+    ]
+  },
+  "meta": {
+    "instanceId": "2c58655909a9a84f5a61ca2c475d4e91093d7e864dcc2d75a965330ca5507757"
+  }
+}

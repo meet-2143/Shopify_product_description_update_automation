@@ -1,0 +1,336 @@
+[
+  {
+    "finalEmptyProductCount": 82,
+    "finalTotalProducts": 304,
+    "emptyProductsList": [
+      {
+        "id": "9081032769762",
+        "title": "CHASHI-CHINIGURA RICE-1 KG"
+      },
+      {
+        "id": "9081034997986",
+        "title": "BANNO-BROWN RICE-1KG"
+      },
+      {
+        "id": "9081036505314",
+        "title": "BANNO-BROWN BASMATI RICE-5 KG"
+      },
+      {
+        "id": "9081048105186",
+        "title": "VADILAL-EVERYDAY GOLD BASMATI RICE-5KG"
+      },
+      {
+        "id": "9081048858850",
+        "title": "TAJ-EVERYDAY BASMATI RICE-5KG"
+      },
+      {
+        "id": "9081048924386",
+        "title": "TAJ KING-PRO BOILED SELA RICE-5KG"
+      },
+      {
+        "id": "9081048957154",
+        "title": "WHITE TIGER-BASMATI RICE-5KG"
+      },
+      {
+        "id": "9081050726626",
+        "title": "TAJ-CLASSIC RICE-1KG"
+      },
+      {
+        "id": "9081050759394",
+        "title": "TAJ-ORGANIC AROMATIC BASMATI RICE-2.5KG"
+      },
+      {
+        "id": "9081052299490",
+        "title": "NIRAPARA-MATTA RICE-10KG"
+      },
+      {
+        "id": "9081054265570",
+        "title": "TAJ-SUPREME BASMATI RICE-5KG"
+      },
+      {
+        "id": "9081061376226",
+        "title": "NIRAPARA-LONG GRAIN MATTA RICE-5 KG4"
+      },
+      {
+        "id": "9081062359266",
+        "title": "KATOOMBA-EXOTIC BASMATI-5 KG"
+      },
+      {
+        "id": "9081066651874",
+        "title": "KATOOMBA-IDLY RICE-5KG"
+      },
+      {
+        "id": "9081067176162",
+        "title": "DOUBLE HORSE-WHITE RAW RICE-5KG"
+      },
+      {
+        "id": "9081067864290",
+        "title": "GRANDMAS IDLY RICE 5kg"
+      },
+      {
+        "id": "9081069469922",
+        "title": "DOUBLE HORSE-WHITE RAW RICE-1KG"
+      },
+      {
+        "id": "9081076154594",
+        "title": "INDIA GATE-CLASSIC RICE-10KG"
+      },
+      {
+        "id": "9081077432546",
+        "title": "INDIA GATE-BROWN RICE-5KG"
+      },
+      {
+        "id": "9081084575970",
+        "title": "ALISHAAN DELIGHT INDIAN BASMATI RICE 1kg"
+      },
+      {
+        "id": "9081089556706",
+        "title": "PARLIAMENT-LOW GI BASMATI RICE-5KG"
+      },
+      {
+        "id": "9081090572514",
+        "title": "DAAWAT-SELECT-1 KG"
+      },
+      {
+        "id": "9081090605282",
+        "title": "DAAWAT-EVERYDAY-5 KG"
+      },
+      {
+        "id": "9081090736354",
+        "title": "DAAWAT-SELECT BASMATI-5 KG"
+      },
+      {
+        "id": "9081090769122",
+        "title": "DAAWAT-BIRYANI RICE-5 KG"
+      },
+      {
+        "id": "9081091064034",
+        "title": "BANNO -BASMATI RICE -20 KG"
+      },
+      {
+        "id": "9081094078690",
+        "title": "INDIA GATE EVERYDAY 1KG"
+      },
+      {
+        "id": "9081094209762",
+        "title": "DAAWAT-GOLDEN SELLA-5KG"
+      },
+      {
+        "id": "9081094373602",
+        "title": "ADUKKALA-JEERAKASARA RICE-5KG"
+      },
+      {
+        "id": "9081094668514",
+        "title": "ADUKKALA-VADI MATTA RICE-5KG"
+      },
+      {
+        "id": "9081097355490",
+        "title": "INDYA GATTI AVALAKI-500GM"
+      },
+      {
+        "id": "9081103581410",
+        "title": "INDYA-SONA MASOORI-5KG"
+      },
+      {
+        "id": "9081103646946",
+        "title": "INDIA GATE-SONA MASOORI RICE-25 KG"
+      },
+      {
+        "id": "9081103679714",
+        "title": "PARLIAMENT-LOW GI BASAMATI RICE-1 KG"
+      },
+      {
+        "id": "9081116328162",
+        "title": "DELHI 6-BROWN BASMATI RICE-1KG"
+      },
+      {
+        "id": "9081116688610",
+        "title": "TSF-BROWN BASMATI RICE-5KG"
+      },
+      {
+        "id": "9081121276130",
+        "title": "BANNO-LONG GRAIN RICE-1KG"
+      },
+      {
+        "id": "9081124716770",
+        "title": "INDIA GATE-PREMIUM RICE-20KG"
+      },
+      {
+        "id": "9081127272674",
+        "title": "INDYA-IDLY RICE-5KG"
+      },
+      {
+        "id": "9081131040994",
+        "title": "BANNO-BASMATI RICE 5KG"
+      },
+      {
+        "id": "9081131630818",
+        "title": "INDIA GATE-GOLDEN SELLA-5 KG"
+      },
+      {
+        "id": "9081131958498",
+        "title": "DAAWAT-BROWN RICE JAR-5 KG"
+      },
+      {
+        "id": "9081131991266",
+        "title": "DAAWAT-BROWN BASMATI RICE-1KG"
+      },
+      {
+        "id": "9081132286178",
+        "title": "INDYA-CROWN BASMATI RICE-5 KG"
+      },
+      {
+        "id": "9081133891810",
+        "title": "PATTU-PREMIUM BASMATI RICE-5 KG"
+      },
+      {
+        "id": "9081136742626",
+        "title": "INDIA GATE-CLASSIC RICE-20KG"
+      },
+      {
+        "id": "9081150931170",
+        "title": "INDIA GATE-CLASSIC RICE-5KG"
+      },
+      {
+        "id": "9081150996706",
+        "title": "INDIA GATE-PREMIUM RICE-5KG"
+      },
+      {
+        "id": "9081151324386",
+        "title": "PATTU-SONA MASURI-5 KG"
+      },
+      {
+        "id": "9081153487074",
+        "title": "INDIA GATE-SONA MASOORI-10KG"
+      },
+      {
+        "id": "9081158238434",
+        "title": "INDIA GATE-CLASSIC RICE-1KG"
+      },
+      {
+        "id": "9081158271202",
+        "title": "INDIA GATE-PREMIUM-1KG"
+      },
+      {
+        "id": "9081173934306",
+        "title": "INDIA GATE-SONA MASOORI-5 KG"
+      },
+      {
+        "id": "9081177374946",
+        "title": "PRIYA-SONA MASOORI RICE-5 KG"
+      },
+      {
+        "id": "9081179177186",
+        "title": "INDYA-PONI BOILED RICE-5 KG"
+      },
+      {
+        "id": "9081187598562",
+        "title": "PATTU-IDLI RICE-5 KG"
+      },
+      {
+        "id": "9081197527266",
+        "title": "INDIA GATE-PREMIUM RICE-10 KG"
+      },
+      {
+        "id": "9081197560034",
+        "title": "INDIA GATE-GOLDEN SELLA RICE-10KG"
+      },
+      {
+        "id": "9081197691106",
+        "title": "PRIYA-SONA MASORI-10 KG"
+      },
+      {
+        "id": "9081203982562",
+        "title": "ADUKKALA-PONNI BOILED RICE-5KG"
+      },
+      {
+        "id": "9081208144098",
+        "title": "ACI PURE-KALIJEERA RICE-1KG"
+      },
+      {
+        "id": "9081215484130",
+        "title": "ADUKKALA-IDLI DOSA RICE-5KG"
+      },
+      {
+        "id": "9081229377762",
+        "title": "VISHWAS-MATTA RICE-10KG"
+      },
+      {
+        "id": "9081237897442",
+        "title": "ADUKKALA-WHITE RAW RICE-5KG"
+      },
+      {
+        "id": "9081240256738",
+        "title": "DAAWAT EVERYDAY BASMATI RICE 20KG"
+      },
+      {
+        "id": "9081240387810",
+        "title": "PARLIAMENT LOW GI RICE 20KG"
+      },
+      {
+        "id": "9081243009250",
+        "title": "DIET INDIA EXTRA LONG BASMATI RICE 5Kg"
+      },
+      {
+        "id": "9081244123362",
+        "title": "GAJANAND SONA MASOORI 5Kg"
+      },
+      {
+        "id": "9081244385506",
+        "title": "DAAWAT EVERYDAY BASMATI 1Kg"
+      },
+      {
+        "id": "9081249923298",
+        "title": "TSF ANDRA MASOORI RICE 1kg"
+      },
+      {
+        "id": "9081260409058",
+        "title": "INDIA GATE GOLDEN SELLA 20kg"
+      },
+      {
+        "id": "9081260474594",
+        "title": "TSF TUKDA RICE 1kg"
+      },
+      {
+        "id": "9081263653090",
+        "title": "PATTU SONA MASOORI RICE 20kg"
+      },
+      {
+        "id": "9081264603362",
+        "title": "ALISHAAN-SUPERBA BASMATI RICE-5KG"
+      },
+      {
+        "id": "9081264668898",
+        "title": "ALISHAN-DAILY BASMATI RICE-5KG"
+      },
+      {
+        "id": "9081265848546",
+        "title": "GAJANAND-IDLI RICE-5KG"
+      },
+      {
+        "id": "9082902773986",
+        "title": "BANNO-BASMATI RICE-10KG"
+      },
+      {
+        "id": "9090126512354",
+        "title": "DAAWAT-TRADITIONAL BASMATI RICE-5KG"
+      },
+      {
+        "id": "9106627264738",
+        "title": "BASMA-BASMATI RICE-5KG"
+      },
+      {
+        "id": "9106627330274",
+        "title": "BASMA-PARBOILED BASMATI RICE-5KG"
+      },
+      {
+        "id": "9106631065826",
+        "title": "SUNGROW-RED RICE-500GM"
+      },
+      {
+        "id": "9111967498466",
+        "title": "PALAT-RED RAW RICE-1KG"
+      }
+    ]
+  }
+]

@@ -17,7 +17,7 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 
-INPUT_FILE = 'atta_products.json'
+INPUT_FILE = 'others.json'
 PROCESSED_LOG_CSV = 'processed_products_log.csv'
 
 SHOPIFY_GRAPHQL_URL = f"{SHOPIFY_SHOP_URL.rstrip('/')}/admin/api/2024-07/graphql.json"
@@ -112,7 +112,7 @@ Only return the HTML code. No introductory text."""
 
     def save_to_supabase(self, product_id: str, title: str, description: str) -> bool:
         """Insert product_id, name and description into Supabase Atta table"""
-        url = f"{SUPABASE_URL}/rest/v1/Atta"
+        url = f"{SUPABASE_URL}/rest/v1/OTHERS"
         payload = {
             "Product_id": product_id,
             "Product_name": title,

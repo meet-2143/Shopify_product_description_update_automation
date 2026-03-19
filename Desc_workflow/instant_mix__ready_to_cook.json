@@ -1,0 +1,240 @@
+[
+  {
+    "finalEmptyProductCount": 58,
+    "finalTotalProducts": 183,
+    "emptyProductsList": [
+      {
+        "id": "9080846090466",
+        "title": "LAZIZA- FIRNI KHAS-150 GM"
+      },
+      {
+        "id": "9080847073506",
+        "title": "LAZIZA - ORANGE JELLY- 85 GM"
+      },
+      {
+        "id": "9080847171810",
+        "title": "LAZIZA -STRAWBERRY FALOODA- 195 GM"
+      },
+      {
+        "id": "9080847237346",
+        "title": "LAZIZA -PISTACHIO-FALOODA-200GM"
+      },
+      {
+        "id": "9080847270114",
+        "title": "LAZIZA-KESHA FALOODA-200GM"
+      },
+      {
+        "id": "9080893669602",
+        "title": "AHMED-JELLY ORANGE CRYSTAL-85 GM"
+      },
+      {
+        "id": "9080903139554",
+        "title": "MOTHER'S-UPMA-180GM"
+      },
+      {
+        "id": "9080903696610",
+        "title": "MOTHER-CHICKEN BIRYANI-100GM"
+      },
+      {
+        "id": "9080905826530",
+        "title": "LAZIZA-ORIGINAL KHEER MIX-155 GM"
+      },
+      {
+        "id": "9080905859298",
+        "title": "LAZIZA-KHEER MIX-155 GM"
+      },
+      {
+        "id": "9080905892066",
+        "title": "LAZIZA-KHEER MIX PISTACHIO-155 GM"
+      },
+      {
+        "id": "9080906023138",
+        "title": "MTR-RAVA DOSA MIX-500 GM"
+      },
+      {
+        "id": "9080906055906",
+        "title": "MTR-UPMA MIX-200 GM"
+      },
+      {
+        "id": "9080906088674",
+        "title": "MTR-UTTAPPAM INTANT MIX-500 GM"
+      },
+      {
+        "id": "9080906154210",
+        "title": "GITS-SAMBAR MIX-200GM"
+      },
+      {
+        "id": "9080906219746",
+        "title": "GITS-DAHI VADA MIX-500GM"
+      },
+      {
+        "id": "9080906547426",
+        "title": "MTR RAVI IDLI 1KG"
+      },
+      {
+        "id": "9080911921378",
+        "title": "SAFFOLA-MASALA OATS-500GM"
+      },
+      {
+        "id": "9080912052450",
+        "title": "SAFFOLA-MASALA OATS-500GM 3"
+      },
+      {
+        "id": "9080912609506",
+        "title": "GITS-RAVA DOSA-500GM"
+      },
+      {
+        "id": "9080912642274",
+        "title": "GITS-PAKORA MIX-500GM"
+      },
+      {
+        "id": "9080912707810",
+        "title": "GITS-UPMA-500GM"
+      },
+      {
+        "id": "9080912904418",
+        "title": "GITS-HANDVO-500GM"
+      },
+      {
+        "id": "9080915165410",
+        "title": "LAZIZA- LEMON JELLY-85 GM"
+      },
+      {
+        "id": "9080923160802",
+        "title": "GITS-RICE IDLI MIX-500 GM"
+      },
+      {
+        "id": "9080923291874",
+        "title": "MTR-BISIBELEBATH MASALA-100GM"
+      },
+      {
+        "id": "9080924340450",
+        "title": "RAFHAN- STROBERRY CUSTARD- 275 GM"
+      },
+      {
+        "id": "9080926142690",
+        "title": "HR- KHAMAN DHOKLA- 12 PCS"
+      },
+      {
+        "id": "9080926634210",
+        "title": "SHAN-KHEER MIX-150GM"
+      },
+      {
+        "id": "9080926666978",
+        "title": "SHAN-SHEER KHURMA MIX-150GM"
+      },
+      {
+        "id": "9080929026274",
+        "title": "SHAN-RASMALAI MIX-100GM"
+      },
+      {
+        "id": "9080929190114",
+        "title": "SHAN-GULAB JAMUN MIX-100 GM"
+      },
+      {
+        "id": "9080930566370",
+        "title": "GITS-DOSA MIX- 500GM"
+      },
+      {
+        "id": "9080930599138",
+        "title": "GITS-KHAMAN DHOKLA-500 GM"
+      },
+      {
+        "id": "9080931778786",
+        "title": "LAZIZA -KULFI MALAI STD- 182 GM"
+      },
+      {
+        "id": "9080940101858",
+        "title": "LAZIZA-SHEER KHURMA SAFFRON-160 GM"
+      },
+      {
+        "id": "9080941248738",
+        "title": "AHMED-STRAW JELLY CRYSTAL-85GM"
+      },
+      {
+        "id": "9080941314274",
+        "title": "AHMED -BANANA JELLY- 70 GM"
+      },
+      {
+        "id": "9080941412578",
+        "title": "AHMED- CREME CARAMEL JALLEY- 70 GM"
+      },
+      {
+        "id": "9080941576418",
+        "title": "NATIONAL -MANGOJELLY-80 GM"
+      },
+      {
+        "id": "9080943739106",
+        "title": "LAZIZA-JELLY-STRAWBERRY-85 GM"
+      },
+      {
+        "id": "9080948752610",
+        "title": "AHMED-VANILA CUSTARD POWDER-300 GM"
+      },
+      {
+        "id": "9080948949218",
+        "title": "SHAN-JELLY STRAWBERRY-80 GM"
+      },
+      {
+        "id": "9080950554850",
+        "title": "AHMED-PEACH JELLY-70GM"
+      },
+      {
+        "id": "9080950620386",
+        "title": "AHMED-BLUEBERRY JELLY-70GM"
+      },
+      {
+        "id": "9080952258786",
+        "title": "LAZIZA - CHERRY JELLY- 85 GM"
+      },
+      {
+        "id": "9080956813538",
+        "title": "MOTHERS-POHA MIX-160GM"
+      },
+      {
+        "id": "9080970215650",
+        "title": "AHMED-JELLY ORANGE CRYSTAL-85 GM 2"
+      },
+      {
+        "id": "9080970248418",
+        "title": "AHMED-VANILA CUSTARD POWDER-300 GM 2"
+      },
+      {
+        "id": "9080970281186",
+        "title": "AHMED-CUSTARD STRAWBERRY-300 GM 2"
+      },
+      {
+        "id": "9080970313954",
+        "title": "AHMED-CUSTARD BANANA-300 GM 2"
+      },
+      {
+        "id": "9080970379490",
+        "title": "AHMED-CUSTARD MANGO-300 GM 2"
+      },
+      {
+        "id": "9080970412258",
+        "title": "AHMED-CUSTARD MIX FRUIT-300 GM 2"
+      },
+      {
+        "id": "9081004589282",
+        "title": "UTTAM-PANIPURI CHIPS-1KG"
+      },
+      {
+        "id": "9081008488674",
+        "title": "SHAN JELLY MANGO 80g"
+      },
+      {
+        "id": "9081018876130",
+        "title": "DEEP-HANDVO MIX-400GM"
+      },
+      {
+        "id": "9081018974434",
+        "title": "DEEP-IDLI MIX-400GM"
+      },
+      {
+        "id": "9081113346274",
+        "title": "SHAN-VANILLA CUSTARD-200GM"
+      }
+    ]
+  }
+]

@@ -1,0 +1,600 @@
+[
+  {
+    "finalEmptyProductCount": 148,
+    "finalTotalProducts": 765,
+    "emptyProductsList": [
+      {
+        "id": "9080836522210",
+        "title": "BANSI-ROASTED SALTED KABULI CHANA-400GM"
+      },
+      {
+        "id": "9080852807906",
+        "title": "UTTAM-ROASTED CHANA-500 GM"
+      },
+      {
+        "id": "9080852873442",
+        "title": "UTTAM-CHANA WTH SKIN-500M"
+      },
+      {
+        "id": "9080856772834",
+        "title": "DELHI 6-ROASTED CHANA-400GM"
+      },
+      {
+        "id": "9080858280162",
+        "title": "DELHI 6-ROASTED CHANA-0800GM"
+      },
+      {
+        "id": "9080886034658",
+        "title": "PATTU-ROSTED SPLIT GRAM- 1KG"
+      },
+      {
+        "id": "9080911364322",
+        "title": "SPARK-ROASTED CHANA WHOLE WITHOUT SKIN-400 GM"
+      },
+      {
+        "id": "9080937480418",
+        "title": "SPARK-ROASTED CHANA-500GM"
+      },
+      {
+        "id": "9080947245282",
+        "title": "JAIPUR-MAHABLESHWAR CHANA-1KG"
+      },
+      {
+        "id": "9081006162146",
+        "title": "GAJANAND CHANA DALIA 400g"
+      },
+      {
+        "id": "9081029460194",
+        "title": "SHEZAN-MIXED FRUIT JAM-440GM"
+      },
+      {
+        "id": "9081032802530",
+        "title": "NESTLE-EVERYDAY ORIGNAL POWDER TEA WHITENER-850GM"
+      },
+      {
+        "id": "9081033883874",
+        "title": "TOOBA-HOT SAUCE-270 GM"
+      },
+      {
+        "id": "9081034211554",
+        "title": "TOOBA KEWRA WATER-1LT"
+      },
+      {
+        "id": "9081036538082",
+        "title": "TOOBA-CHILLI GARLIC SAUCE-300GM"
+      },
+      {
+        "id": "9081036767458",
+        "title": "TOOBA-TAMARIND SAUCE-375 GM"
+      },
+      {
+        "id": "9081038373090",
+        "title": "TOOBA-SOY SAUCE-320ML"
+      },
+      {
+        "id": "9081041158370",
+        "title": "TOOBA -VERMSILLI- 200G"
+      },
+      {
+        "id": "9081042043106",
+        "title": "NATIONAL-GREEN CHILLI SAUSE-300GM"
+      },
+      {
+        "id": "9081045680354",
+        "title": "LAZIZA SEVEYA"
+      },
+      {
+        "id": "9081046958306",
+        "title": "HALEEM"
+      },
+      {
+        "id": "9081047023842",
+        "title": "KNORR SOUP"
+      },
+      {
+        "id": "9081051087074",
+        "title": "SHAANDAR-SOYA CHAAP-800 GM"
+      },
+      {
+        "id": "9081051644130",
+        "title": "DOUBLE HORSE-2 MIN INSTANT IDIYAPPAM-200GM"
+      },
+      {
+        "id": "9081056231650",
+        "title": "SAC FOOD COLOUR 2"
+      },
+      {
+        "id": "9081056690402",
+        "title": "REHMAT E SHREEN-PHENI-200GM"
+      },
+      {
+        "id": "9081068159202",
+        "title": "SHAPLA-PUFFED RICE-500GM"
+      },
+      {
+        "id": "9081068323042",
+        "title": "SHANGRILA-GREEN CHILLI SAUCE-400GM"
+      },
+      {
+        "id": "9081069502690",
+        "title": "DOUBLE HORSE-RED RICE FLAKES-500GM"
+      },
+      {
+        "id": "9081071796450",
+        "title": "TELUGU-POHA MEDIUM-500GM"
+      },
+      {
+        "id": "9081072582882",
+        "title": "BIKANO-PAPAD AMRITSARI-200GM"
+      },
+      {
+        "id": "9081074352354",
+        "title": "SPARK-POHA THICK-500GM"
+      },
+      {
+        "id": "9081077301474",
+        "title": "UTTAM-RED JAGGERY-1.7 APPROX"
+      },
+      {
+        "id": "9081078448354",
+        "title": "CHINGS-SWEET CORN SOUP-55GM"
+      },
+      {
+        "id": "9081080938722",
+        "title": "INDYA-SOYA WADI-400 GM"
+      },
+      {
+        "id": "9081081069794",
+        "title": "SHANDAAR-PUNJABI SHAKKAR-1KG"
+      },
+      {
+        "id": "9081081135330",
+        "title": "PRAN-PUFFED RICE-500GM"
+      },
+      {
+        "id": "9081081495778",
+        "title": "INDYA-RICE FLAKE(POHA)-500 GM"
+      },
+      {
+        "id": "9081081594082",
+        "title": "BAMBINO-ROASTED VERMICILLI-800 GM"
+      },
+      {
+        "id": "9081081692386",
+        "title": "BAMBINO-VERMICELLI-800G"
+      },
+      {
+        "id": "9081081757922",
+        "title": "BAMBINO-450GM VERMICELLI-450 GM"
+      },
+      {
+        "id": "9081089065186",
+        "title": "MOTHERS-PUNJABI MASALA PAPADUM- 200GM"
+      },
+      {
+        "id": "9081089884386",
+        "title": "UTTAM-SABUDANA-1KG"
+      },
+      {
+        "id": "9081090343138",
+        "title": "UTTAM-RICE FLAKES(POHA) MEDIUM-500GM"
+      },
+      {
+        "id": "9081091227874",
+        "title": "SAURBHI-SABUDANA-1KG"
+      },
+      {
+        "id": "9081092964578",
+        "title": "UTTAM-RED JAGGERY-900 GM"
+      },
+      {
+        "id": "9081093095650",
+        "title": "CHING'S-MANCHURIAN STIR FRY SAUCE-250GM"
+      },
+      {
+        "id": "9081100697826",
+        "title": "MARATHI-POHA-PAPAD"
+      },
+      {
+        "id": "9081104892130",
+        "title": "PATTU-CHILLI GARLIC SAUCE-500GM"
+      },
+      {
+        "id": "9081114919138",
+        "title": "ADUKKALA-SABUDANA-500GM"
+      },
+      {
+        "id": "9081115246818",
+        "title": "ADUKKALA-SAGO SEEDS SABUDANA-1KG"
+      },
+      {
+        "id": "9081115836642",
+        "title": "SHAN"
+      },
+      {
+        "id": "9081118949602",
+        "title": "SAURBHI-RICE FLAKE(POHA) MEDIUM-500 GM"
+      },
+      {
+        "id": "9081119047906",
+        "title": "UTTAM-PANI PURI CHIPS-200GM"
+      },
+      {
+        "id": "9081119080674",
+        "title": "LIJJAT-CUMIN PAPPAD-200 GM"
+      },
+      {
+        "id": "9081119113442",
+        "title": "LIJJAT-PAPAD PLAIN-200GM"
+      },
+      {
+        "id": "9081120162018",
+        "title": "PATTU-HOT AND SWEET TOMATO SAUCE-500GM"
+      },
+      {
+        "id": "9081127862498",
+        "title": "SHANDAAR-PUNJABI PESI GUR-1KG"
+      },
+      {
+        "id": "9081129435362",
+        "title": "MC-TANDOOR COLOR-50 ML"
+      },
+      {
+        "id": "9081131106530",
+        "title": "DAADAJI-JAGGERY-1KG"
+      },
+      {
+        "id": "9081132646626",
+        "title": "CHINGS-GREEN CHILLI SAUCE-680GM"
+      },
+      {
+        "id": "9081133269218",
+        "title": "MOTHERS RECIPE-MADRAS PAPPADAMS-100 GM"
+      },
+      {
+        "id": "9081133924578",
+        "title": "CHINGS-HOT SOUR SOUP-55GM"
+      },
+      {
+        "id": "9081133957346",
+        "title": "CHINGS-TOMATO SOUP-55GM"
+      },
+      {
+        "id": "9081134416098",
+        "title": "CHINGS-MIX VEG SOUP-50GM"
+      },
+      {
+        "id": "9081134448866",
+        "title": "CHINGS-MANCHOW SOUP-55 GM"
+      },
+      {
+        "id": "9081138086114",
+        "title": "CHINGS-GREEN CHILLI SAUCE-190GM"
+      },
+      {
+        "id": "9081139036386",
+        "title": "MOTHERS-GREEN CHILLI GARLIC PAPAD-200GM"
+      },
+      {
+        "id": "9081143197922",
+        "title": "UTTAM-RICE FLAKE MEDIUM-1KG"
+      },
+      {
+        "id": "9081144344802",
+        "title": "UTTAM-RICE FLAKES THIN-1KG"
+      },
+      {
+        "id": "9081144377570",
+        "title": "UTTAM-POHA THICK- 1KG"
+      },
+      {
+        "id": "9081144410338",
+        "title": "UTTAM-RICE FLAKE THICK-1KG"
+      },
+      {
+        "id": "9081144443106",
+        "title": "UTTAM-SOYA WADI-500GM"
+      },
+      {
+        "id": "9081144869090",
+        "title": "UTTAM-RED JAGGARY-450GM"
+      },
+      {
+        "id": "9081153618146",
+        "title": "UTTAM-WHITE JAGGERY-1KG"
+      },
+      {
+        "id": "9081156239586",
+        "title": "CHINGS-RED CHILLI SAUCE-200GM"
+      },
+      {
+        "id": "9081162891490",
+        "title": "LIJJAT-SINDI MASALA PAPAD-200GM"
+      },
+      {
+        "id": "9081165119714",
+        "title": "SURBHI -WAFER-500GM"
+      },
+      {
+        "id": "9081166233826",
+        "title": "BAMBINO-ROASTED VERMICELLI-500GM"
+      },
+      {
+        "id": "9081166299362",
+        "title": "BAMBINO-VERMICELLI ROASTED-1KG"
+      },
+      {
+        "id": "9081166463202",
+        "title": "SPARK- POHA MEDIUM -1KG"
+      },
+      {
+        "id": "9081168298210",
+        "title": "SPARK -3D TRIANGLE FRYUMS- 200G"
+      },
+      {
+        "id": "9081169346786",
+        "title": "SPARK- BHINDI FRYUMS -500G"
+      },
+      {
+        "id": "9081171280098",
+        "title": "AMBIKA-APPALAM PAPAD NO. 2-285GM"
+      },
+      {
+        "id": "9081171345634",
+        "title": "AMBIKA-APPALAM PAPAD NO. 3-225GM"
+      },
+      {
+        "id": "9081173606626",
+        "title": "BAKE PARLOR-COLOR VERMICELLI-400 GM"
+      },
+      {
+        "id": "9081174786274",
+        "title": "UTTAM-SOYA WADI-900GM"
+      },
+      {
+        "id": "9081176490210",
+        "title": "CHINGS-SCHEZWAN HOT SAUCE-250GM"
+      },
+      {
+        "id": "9081187205346",
+        "title": "SPARK- POHA THICK-1KG"
+      },
+      {
+        "id": "9081189335266",
+        "title": "BAMBINO-ROASTED VERMICELLI-350 GM"
+      },
+      {
+        "id": "9081193038050",
+        "title": "BIKAJI - UDID DALPAPAD- 200GM"
+      },
+      {
+        "id": "9081199100130",
+        "title": "SHANDAAR-PUNJABI MASALA GUR-1 KG"
+      },
+      {
+        "id": "9081200378082",
+        "title": "SHAN- ROASTED VERMCELLI- 150 GM"
+      },
+      {
+        "id": "9081201230050",
+        "title": "KISSAN-MIXED FRUIT JAM-500 GM"
+      },
+      {
+        "id": "9081202311394",
+        "title": "DADAJI-MASALA JAGGERY-1KG"
+      },
+      {
+        "id": "9081208242402",
+        "title": "ADUKKALA-JAGGERY BALL-500GM"
+      },
+      {
+        "id": "9081212469474",
+        "title": "CHINGS-ORIGINAL SRIRACHA-550GM"
+      },
+      {
+        "id": "9081215942882",
+        "title": "ADUKKALA-RIBBON ADA-200GM"
+      },
+      {
+        "id": "9081218040034",
+        "title": "DADAJI-JAGGARY POWDER-2KG"
+      },
+      {
+        "id": "9081218138338",
+        "title": "MALABAR DELIGHTS-SOYA BALLS-908GM"
+      },
+      {
+        "id": "9081225904354",
+        "title": "SPARK-POHATHIN-500GM"
+      },
+      {
+        "id": "9081231868130",
+        "title": "BANSI-NATURAL JAGGERY-900GM"
+      },
+      {
+        "id": "9081236816098",
+        "title": "DADAJI PESI GUD 2KG"
+      },
+      {
+        "id": "9081237307618",
+        "title": "GAJANAD CORN POHA-500GM"
+      },
+      {
+        "id": "9081240551650",
+        "title": "ROYAL GOLD-PHOOL MAKHANA-200GM"
+      },
+      {
+        "id": "9081247695074",
+        "title": "SABRINI HOT MANGO CHUTNEY 350g"
+      },
+      {
+        "id": "9081248776418",
+        "title": "SAURBHI TANDOORI FOOD COLOR 100g"
+      },
+      {
+        "id": "9081251889378",
+        "title": "MAHARAJA CHOICE BIRYANI ESSENCE"
+      },
+      {
+        "id": "9081252020450",
+        "title": "MAHARAJA CHOICE ROSE WATER 50ml"
+      },
+      {
+        "id": "9081252118754",
+        "title": "MARATHI SWAD FLOWER KURDAI 200g"
+      },
+      {
+        "id": "9081260671202",
+        "title": "ADUKKALA JAGGERY BALL 500gm"
+      },
+      {
+        "id": "9081260769506",
+        "title": "ADUKKALA JAGGERY BALL 1kg"
+      },
+      {
+        "id": "9081261588706",
+        "title": "MAGGI-HOT & SWEET SAUCE-1KG"
+      },
+      {
+        "id": "9081264406754",
+        "title": "ASHOKA-TWISTY TAMARING DIPPPING SAUCE-250GM"
+      },
+      {
+        "id": "9081264898274",
+        "title": "MOTHER'S-TIKKA MASALA COOKING SAUCE-400GM"
+      },
+      {
+        "id": "9081266208994",
+        "title": "NUTRELA-SOYA CHUNKS-220GM"
+      },
+      {
+        "id": "9081267519714",
+        "title": "MALAS-SABUDHANA-500GM"
+      },
+      {
+        "id": "9081274269922",
+        "title": "TSF-PLAIN KHEEL-100GM"
+      },
+      {
+        "id": "9082079641826",
+        "title": "DELHI 6-BANANA ESSENCE-20ML"
+      },
+      {
+        "id": "9082381435106",
+        "title": "UNITED KING-U SHAPE VERMICELLI-150GM"
+      },
+      {
+        "id": "9082772488418",
+        "title": "SPARK-PHOOL MAKHANA-100GM"
+      },
+      {
+        "id": "9082772783330",
+        "title": "SPARK-JOWAR DHANI-400G"
+      },
+      {
+        "id": "9082773438690",
+        "title": "SPARK-SABUDANA-500GM"
+      },
+      {
+        "id": "9091769598178",
+        "title": "SPARK-MEDIUM POHA-500GM"
+      },
+      {
+        "id": "9091849486562",
+        "title": "MALABAR TREATS-SOYA CHUNKS-800GM"
+      },
+      {
+        "id": "9091916857570",
+        "title": "DELHI 6-SURTI MUMRA-800GM"
+      },
+      {
+        "id": "9091955228898",
+        "title": "DELHI 6-KOLHAPURI MUMRA-400GM"
+      },
+      {
+        "id": "9091955294434",
+        "title": "DELHI 6-MUMRA-400GM"
+      },
+      {
+        "id": "9093635408098",
+        "title": "ADUKKALA-JAGGERY POWDER DARK-500GM"
+      },
+      {
+        "id": "9093635473634",
+        "title": "ADUKKALA-JAGGERY POWDER-500GM"
+      },
+      {
+        "id": "9093796135138",
+        "title": "DELHI 6-KOHLAPURI MUMRA-800GM"
+      },
+      {
+        "id": "9093796200674",
+        "title": "DELHI 6-SURTI MUMRA-400GM"
+      },
+      {
+        "id": "9095820673250",
+        "title": "MAGGI-TOMATO SAUCE-485GM"
+      },
+      {
+        "id": "9095821394146",
+        "title": "SATVA-PANIPURI RAW-200GM"
+      },
+      {
+        "id": "9095821590754",
+        "title": "SATVA-NATURAL JAGGERY-900GM"
+      },
+      {
+        "id": "9100094144738",
+        "title": "SPARK-LONG PIPE FRYMS-200GM"
+      },
+      {
+        "id": "9100096438498",
+        "title": "SPARK-CARROM BOARD-NO6"
+      },
+      {
+        "id": "9106651709666",
+        "title": "AHMED-ROASTED VERMICLEEI-150GM"
+      },
+      {
+        "id": "9110859972834",
+        "title": "INDYA-KOLHAPURI JAGGERY SLAB-2KG"
+      },
+      {
+        "id": "9111344316642",
+        "title": "MANNA-JAGGERY POWDER-907GM"
+      },
+      {
+        "id": "9111497048290",
+        "title": "UNITED KING-U SHAPE VERMICILLI-150GM(PACK OF 3)"
+      },
+      {
+        "id": "9111967400162",
+        "title": "PALAT-JAGGERY POWDER DARK-1KG"
+      },
+      {
+        "id": "9113108480226",
+        "title": "SHANDAAR-PUNJABI PESI GUR-2KG"
+      },
+      {
+        "id": "9113109790946",
+        "title": "SHANDAAR-PUNJABI SHAKKAR-2KG"
+      },
+      {
+        "id": "9114482147554",
+        "title": "SPARK-KHICHIYA PAPAD CUMIN-400GM"
+      },
+      {
+        "id": "9116299821282",
+        "title": "SPARK-MAKAI POHA CORN FLAKES-400GM"
+      },
+      {
+        "id": "9127773929698",
+        "title": "ADUKKALA-SADO SEEDS SMALL-500GM"
+      },
+      {
+        "id": "9129118367970",
+        "title": "JAIPUR-MAHABLESHWAR GRAM CHANA-500GM"
+      }
+    ]
+  }
+]

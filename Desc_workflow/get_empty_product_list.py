@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import time
 import requests
@@ -8,7 +9,7 @@ load_dotenv()
 
 SHOPIFY_SHOP_URL = os.getenv('SHOPIFY_SHOP_URL', '').rstrip('/')
 SHOPIFY_ACCESS_TOKEN = os.getenv('SHOPIFY_ACCESS_TOKEN')
-PRODUCT_TYPE = "ATTA"  # Change this to scan a different department
+PRODUCT_TYPE = "UNKNOWN"  # Change this to scan a different department
 
 GRAPHQL_URL = f"{SHOPIFY_SHOP_URL}/admin/api/2024-01/graphql.json"
 HEADERS = {
@@ -84,8 +85,9 @@ def main():
         "emptyProductsList": empty
     }]
 
-    # Save to a file named after the category
-    output_file = f"{PRODUCT_TYPE.lower().replace(' ', '_')}_products.json"
+    # Save to a sanitized filename based on product type
+    safe_name = re.sub(r'[\\/*?:"<>|]', '', PRODUCT_TYPE).strip().replace(' ', '_').lower()
+    output_file = f"{safe_name}.json"
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
 

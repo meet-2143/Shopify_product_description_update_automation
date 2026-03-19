@@ -1,0 +1,60 @@
+[
+  {
+    "finalEmptyProductCount": 13,
+    "finalTotalProducts": 76,
+    "emptyProductsList": [
+      {
+        "id": "9079842046178",
+        "title": "KNORR-NOODLES CHATPATA-50GMx4"
+      },
+      {
+        "id": "9081052594402",
+        "title": "MAGGI-CURRY FLAVOUR-400 GM"
+      },
+      {
+        "id": "9081113215202",
+        "title": "WAI WAI-CHICKEN FLAVOUR NOODLES-5 PK"
+      },
+      {
+        "id": "9081113247970",
+        "title": "WAI WAI-VEG MASALA NOODLES-5 PK"
+      },
+      {
+        "id": "9081116721378",
+        "title": "CHINGS-VEG HAKKA NOODLES-840GM"
+      },
+      {
+        "id": "9081133990114",
+        "title": "MAGGI-MASALA NOODLES-560GM"
+      },
+      {
+        "id": "9081243271394",
+        "title": "SHIN RAMYUN NOODLE SOUP 5PACK"
+      },
+      {
+        "id": "9081250349282",
+        "title": "WAI WAI INSTANT NOODLES CHICKEN PIZZA 5PACK"
+      },
+      {
+        "id": "9081254576354",
+        "title": "MAGGI-MASALA OATS NOODLES-290GM"
+      },
+      {
+        "id": "9081256083682",
+        "title": "KNORR CHICKEN NOODLES PACK OF 6"
+      },
+      {
+        "id": "9081260867810",
+        "title": "BAKE PARLOR QEEMA MACARONI 250g"
+      },
+      {
+        "id": "9081271353570",
+        "title": "MAGGI-ATTA NOODLES-290GM"
+      },
+      {
+        "id": "9093793153250",
+        "title": "MAGGI-VEG ATTA NOODLES-290GM"
+      }
+    ]
+  }
+]
