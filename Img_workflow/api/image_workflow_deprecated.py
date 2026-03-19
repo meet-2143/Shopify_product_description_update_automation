@@ -19,7 +19,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 SHOPIFY_SHOP_URL = os.getenv("SHOPIFY_SHOP_URL")
 SHOPIFY_ACCESS_TOKEN = os.getenv("SHOPIFY_ACCESS_TOKEN")
-SERPAPI_KEY = "41966b0261f39b292bd367b18d5604642586ae7b978562aa6710ae2b9fabfb78"
+SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
 # n8n logic: Exclude list from 'Code in JavaScript2'
 ALREADY_UPDATED = [

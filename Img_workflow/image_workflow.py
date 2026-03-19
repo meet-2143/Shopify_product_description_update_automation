@@ -37,8 +37,6 @@ SHOPIFY_ACCESS_TOKEN = os.getenv("SHOPIFY_ACCESS_TOKEN")
 SERPAPI_KEY = "41966b0261f39b292bd367b18d5604642586ae7b978562aa6710ae2b9fabfb78"
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://ohtatizvsqrvuxiekhsj.supabase.co")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-IMAGE_GEN_MODEL = os.getenv("IMAGE_GEN_MODEL", "gemini-3.1-flash-image-preview")
-IMAGE_GEN_FALLBACK_MODEL = os.getenv("IMAGE_GEN_FALLBACK_MODEL", "imagen-3.0-fast-generate-001")
 
 # n8n logic: Exclude list from 'Code in JavaScript2'
 ALREADY_UPDATED = [
@@ -188,37 +186,29 @@ Format:
             "Clean white background, high resolution, single product, studio lighting.",
         )
 
-        models_to_try = [IMAGE_GEN_MODEL, IMAGE_GEN_FALLBACK_MODEL]
-        
-        for model_name in models_to_try:
-            if not model_name:
-                continue
-                
-            print(f"  Attempting image generation with model: {model_name}")
-            max_retries = 2
-            for attempt in range(max_retries):
-                try:
-                    response = self.genai_client.models.generate_content(
-                        model=model_name,
-                        contents=full_prompt,
-                    )
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                # Using the exact structure provided by the user
+                response = self.genai_client.models.generate_content(
+                    model="gemini-3.1-flash-image-preview",
+                    contents=full_prompt,
+                )
 
-                    import base64
-                    for part in response.parts:
-                        if part.inline_data is not None:
-                            return base64.b64encode(part.inline_data.data).decode('utf-8')
-                    
-                    # If we got here but no image data, maybe the model doesn't support inline_data
-                    # or it returned a different structure.
-                    print(f"    Model {model_name} returned no inline data.")
-                    break # Try next model
-                except Exception as e:
-                    print(f"    Error with {model_name} (attempt {attempt+1}/{max_retries}): {e}")
-                    if "503" in str(e) or "429" in str(e):
-                        time.sleep(1 * (attempt + 1))
-                        continue
-                    break # Fatal error for this model, try next one
-        
+                import base64
+                for part in response.parts:
+                    # Based on the user's snippet structure
+                    if part.inline_data is not None:
+                        # Return base64 for preview
+                        return base64.b64encode(part.inline_data.data).decode('utf-8')
+                
+                return ""
+            except Exception as e:
+                print(f"Error generating with Gemini 3.1 SDK (attempt {attempt+1}/{max_retries}): {e}")
+                if "503" in str(e) or "429" in str(e):
+                    time.sleep(2 * (attempt + 1))
+                    continue
+                break
         return ""
 
     def host_image_in_supabase(self, base64_data: str, product_id: str, product_name: str) -> str:
