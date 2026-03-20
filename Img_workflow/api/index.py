@@ -73,6 +73,12 @@ def search_product(title):
 class GenerateRequest(BaseModel):
     product_name: str
 
+class GenerateFromReferenceRequest(BaseModel):
+    product_name: str
+    reference_image: str  # base64-encoded image data
+    prompt: str
+    mime_type: str = "image/jpeg"
+
 class ApproveRequest(BaseModel):
     product_id: Any
     product_name: str = ""
@@ -132,15 +138,26 @@ def generate_images(request: GenerateRequest):
         "stats": get_stats()
     }
 
-@app.post("/api/generate-ai")
-def generate_ai(request: GenerateRequest):
-    # This only generates the AI image
-    ai_image = processor.generate_ai_image(request.product_name)
-    if not ai_image:
-        raise HTTPException(status_code=500, detail="Gemini failed to generate AI image")
-    
+@app.post("/api/generate-from-reference")
+async def generate_from_reference(request: GenerateFromReferenceRequest):
+    found_id = processor.find_shopify_product_by_name(request.product_name)
+
+    generated_image = processor.generate_image_from_reference(
+        reference_image_base64=request.reference_image,
+        prompt=request.prompt,
+        mime_type=request.mime_type
+    )
+
+    if not generated_image:
+        raise HTTPException(status_code=500, detail="Gemini failed to generate image from reference")
+
+    update_stats(generated=1)
+
     return {
-        "ai_image": ai_image
+        "product_id": found_id,
+        "generated_image": generated_image,
+        "title": request.product_name,
+        "stats": get_stats()
     }
 
 @app.post("/api/approve")

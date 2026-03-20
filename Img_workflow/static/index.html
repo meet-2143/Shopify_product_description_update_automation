@@ -285,6 +285,98 @@
             padding: 2rem 0;
             text-align: center;
         }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--glass-border);
+            margin: 1.5rem 0;
+        }
+
+        .section-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(15, 23, 42, 0.3);
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-placeholder {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .upload-placeholder span {
+            color: var(--primary);
+        }
+
+        #ref-image-preview {
+            width: 100%;
+            max-height: 180px;
+            object-fit: contain;
+            border-radius: 0.5rem;
+            display: none;
+        }
+
+        textarea {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            resize: vertical;
+            min-height: 80px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .ref-result-grid {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .ref-result-grid .side-card {
+            max-width: 480px;
+            width: 100%;
+            cursor: default;
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -305,14 +397,28 @@
                 <input type="text" id="product_name" placeholder="Enter product name (e.g. PATANJALI-DAMRU GLASS-400ML)">
             </div>
 
-            <div style="display: flex; gap: 1rem;">
-                <button id="btn-generate" class="btn-primary" style="flex: 1;">
-                    <span id="gen-text">Generate Options</span>
-                </button>
-                <button id="btn-generate-ai" class="btn-primary" style="flex: 1; display: none; background: var(--primary);">
-                    <span id="gen-ai-text">Generate AI Image</span>
-                </button>
+            <hr class="divider">
+            <div class="section-tag">Reference Image Generation (Optional)</div>
+
+            <div class="field" style="margin-bottom: 1.5rem;">
+                <label>Reference Image</label>
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="ref-image-input" accept="image/*">
+                    <img id="ref-image-preview" alt="Reference preview">
+                    <div class="upload-placeholder" id="upload-placeholder">
+                        Click or drag &amp; drop an image &bull; <span>Browse</span>
+                    </div>
+                </div>
             </div>
+
+            <div class="field" style="margin-bottom: 1.5rem;">
+                <label for="custom-prompt">Prompt</label>
+                <textarea id="custom-prompt" placeholder="e.g. Keep the same product but use a clean white background, studio lighting, high resolution packaging shot"></textarea>
+            </div>
+
+            <button id="btn-generate" class="btn-primary">
+                <span id="gen-text">Generate Options</span>
+            </button>
         </div>
 
         <div id="result-section" class="card">
@@ -321,7 +427,8 @@
                 <div id="found-id" style="font-size: 0.85rem; color: var(--text-muted);">ID: <span id="display-id"></span></div>
             </div>
 
-            <div class="comparison-grid">
+            <!-- Normal mode: comparison grid -->
+            <div class="comparison-grid" id="comparison-grid">
                 <!-- AI Side -->
                 <div class="side-card" id="ai-side" onclick="selectSource('ai')">
                     <div class="side-label">AI Generated (Gemini 3 Flash) ✨</div>
@@ -350,8 +457,18 @@
                 </div>
             </div>
 
+            <!-- Reference mode: single centered image -->
+            <div class="ref-result-grid" id="ref-result-grid" style="display:none;">
+                <div class="side-card">
+                    <div class="side-label">Generated from Reference ✨</div>
+                    <div class="image-container">
+                        <img id="ref-result-img" alt="Generated from reference">
+                    </div>
+                </div>
+            </div>
+
             <button id="btn-approve" class="btn-success">
-                Approve & Update Shopify
+                Approve &amp; Update Shopify
             </button>
         </div>
     </div>
@@ -370,13 +487,21 @@
             aiImage: null,
             currentIndex: 0,
             productId: null,
-            selectedSource: 'ai'
+            selectedSource: 'ai',
+            mode: 'normal' // 'normal' | 'reference'
         };
+
+        let referenceImageBase64 = null;
+        let referenceImageMimeType = 'image/jpeg';
 
         const elements = {
             productName: document.getElementById('product_name'),
             btnGenerate: document.getElementById('btn-generate'),
+            genText: document.getElementById('gen-text'),
             resultSection: document.getElementById('result-section'),
+            comparisonGrid: document.getElementById('comparison-grid'),
+            refResultGrid: document.getElementById('ref-result-grid'),
+            refResultImg: document.getElementById('ref-result-img'),
             previewImg: document.getElementById('preview-img'),
             aiImg: document.getElementById('ai-img'),
             imgShimmer: document.getElementById('img-shimmer'),
@@ -396,8 +521,42 @@
             toast: document.getElementById('toast'),
             toastMsg: document.getElementById('toast-msg'),
             totalGen: document.getElementById('total-gen'),
-            totalApp: document.getElementById('total-app')
+            totalApp: document.getElementById('total-app'),
+            uploadZone: document.getElementById('upload-zone'),
+            refImageInput: document.getElementById('ref-image-input'),
+            refImagePreview: document.getElementById('ref-image-preview'),
+            uploadPlaceholder: document.getElementById('upload-placeholder'),
+            customPrompt: document.getElementById('custom-prompt')
         };
+
+        // --- Reference image upload ---
+        elements.refImageInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            referenceImageMimeType = file.type || 'image/jpeg';
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const result = e.target.result;
+                referenceImageBase64 = result.split(',')[1];
+                elements.refImagePreview.src = result;
+                elements.refImagePreview.style.display = 'block';
+                elements.uploadPlaceholder.style.display = 'none';
+                elements.genText.innerText = 'Generate from Reference';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Drag and drop support
+        elements.uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); elements.uploadZone.classList.add('dragover'); });
+        elements.uploadZone.addEventListener('dragleave', () => elements.uploadZone.classList.remove('dragover'));
+        elements.uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            elements.uploadZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (!file || !file.type.startsWith('image/')) return;
+            elements.refImageInput.files = e.dataTransfer.files;
+            elements.refImageInput.dispatchEvent(new Event('change'));
+        });
 
         function showToast(message, type = 'success') {
             elements.toastMsg.innerText = message;
@@ -470,9 +629,11 @@
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.detail || 'Generation failed');
 
-                currentState.images = data.images || [];
-                currentState.currentIndex = 0;
-                currentState.productId = data.product_id;
+                    currentState.mode = 'normal';
+                    currentState.images = data.images;
+                    currentState.aiImage = data.ai_image;
+                    currentState.currentIndex = 0;
+                    currentState.productId = data.product_id;
 
                 elements.foundTitle.innerText = data.title;
                 elements.displayId.innerText = data.product_id || 'NOT FOUND';
@@ -553,11 +714,22 @@
             elements.btnApprove.disabled = true;
             elements.btnApprove.innerText = 'Updating Shopify...';
 
+            let imageUrl, isBase64;
+            if (currentState.mode === 'reference') {
+                imageUrl = currentState.aiImage;
+                isBase64 = true;
+            } else {
+                imageUrl = currentState.selectedSource === 'ai'
+                    ? currentState.aiImage
+                    : currentState.images[currentState.currentIndex];
+                isBase64 = currentState.selectedSource === 'ai';
+            }
+
             const payload = {
                 product_id: currentState.productId,
                 product_name: elements.foundTitle.innerText,
-                image_url: currentState.selectedSource === 'ai' ? currentState.aiImage : currentState.images[currentState.currentIndex],
-                is_base64: currentState.selectedSource === 'ai'
+                image_url: imageUrl,
+                is_base64: isBase64
             };
 
             try {
@@ -568,7 +740,7 @@
                 });
                 const data = await response.json();
                 if (!response.ok) throw new Error(data.detail || 'Update failed');
-                
+
                 showToast('Shopify updated successfully!');
                 elements.totalApp.innerText = data.stats.total_approved;
                 

@@ -275,6 +275,45 @@ Format:
                 print(f"  Response: {e.response.text}")
             return False
 
+    def find_shopify_product_by_name(self, product_name: str) -> str:
+        """Searches Shopify for a product by title and returns its ID.
+
+        Tries multiple strategies since Shopify's title filter is a prefix search
+        and stored titles may not match the full input name:
+        1. Full name as-is
+        2. Each hyphen-separated part (longest first)
+        """
+        shop_url = SHOPIFY_SHOP_URL.rstrip('/')
+        url = f"{shop_url}/admin/api/2024-01/products.json"
+        headers = {
+            "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
+            "Content-Type": "application/json"
+        }
+
+        # Build list of queries to try: full name first, then each part by length (desc)
+        parts = [p.strip() for p in product_name.split('-') if len(p.strip()) >= 3]
+        parts.sort(key=len, reverse=True)
+        queries = [product_name] + parts
+
+        for query in queries:
+            for attempt in range(3):
+                try:
+                    response = self.session.get(url, headers=headers, params={"title": query}, timeout=45)
+                    response.raise_for_status()
+                    products = response.json().get('products', [])
+                    if products:
+                        matched = products[0]
+                        print(f"  Found product via query '{query}': {matched['id']} | {matched['title']}")
+                        return str(matched['id'])
+                    break  # query returned 0 results, try next query
+                except Exception as e:
+                    print(f"  Error searching Shopify (attempt {attempt+1}/3): {e}")
+                    if attempt < 2:
+                        time.sleep(2)
+
+        print(f"  No Shopify product found for '{product_name}'")
+        return None
+
     def archive_entry_to_sheet(self, title: str, department: str):
         """Replicates 'Append row in sheet' node from n8n."""
         if not self.gc:
@@ -321,6 +360,37 @@ Format:
         
         # n8n: Wait 3 seconds
         time.sleep(3)
+
+    def generate_image_from_reference(self, reference_image_base64: str, prompt: str, mime_type: str = "image/jpeg") -> str:
+        """Generates a new product image using a reference image and custom prompt via Gemini."""
+        if not self.genai_client:
+            print("  GenAI Client not initialized.")
+            return ""
+        try:
+            import base64
+            from google.genai import types
+
+            image_bytes = base64.b64decode(reference_image_base64)
+
+            response = self.genai_client.models.generate_content(
+                model="gemini-3.1-flash-image-preview",
+                contents=[
+                    types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
+                    types.Part.from_text(text=prompt)
+                ],
+                config=types.GenerateContentConfig(
+                    response_modalities=["IMAGE", "TEXT"]
+                )
+            )
+
+            for part in response.parts:
+                if part.inline_data is not None:
+                    return base64.b64encode(part.inline_data.data).decode('utf-8')
+
+            return ""
+        except Exception as e:
+            print(f"Error generating image from reference: {e}")
+            return ""
 
     def run_full_workflow(self):
         """The full automated batching logic from n8n."""
