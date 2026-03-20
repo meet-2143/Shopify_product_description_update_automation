@@ -138,6 +138,14 @@ def generate_images(request: GenerateRequest):
         "stats": get_stats()
     }
 
+@app.post("/api/generate-ai")
+def generate_ai_only(request: GenerateRequest):
+    ai_image = processor.generate_ai_image(request.product_name)
+    if not ai_image:
+        raise HTTPException(status_code=500, detail="Gemini failed to generate AI image")
+    update_stats(generated=1)
+    return {"ai_image": ai_image, "stats": get_stats()}
+
 @app.post("/api/generate-from-reference")
 async def generate_from_reference(request: GenerateFromReferenceRequest):
     found_id = processor.find_shopify_product_by_name(request.product_name)

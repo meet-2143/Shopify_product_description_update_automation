@@ -427,6 +427,10 @@
                 <div id="found-id" style="font-size: 0.85rem; color: var(--text-muted);">ID: <span id="display-id"></span></div>
             </div>
 
+            <button id="btn-generate-ai" class="btn-primary" style="display:none; margin-bottom: 1rem; background: rgba(139,92,246,0.2); border: 1px solid var(--primary);">
+                <span id="gen-ai-text">Generate AI Image</span>
+            </button>
+
             <!-- Normal mode: comparison grid -->
             <div class="comparison-grid" id="comparison-grid">
                 <!-- AI Side -->
@@ -613,50 +617,95 @@
             if (!name) return showToast('Please enter a product name', 'error');
 
             elements.btnGenerate.disabled = true;
-            document.getElementById('gen-text').innerText = 'Thinking...';
-            
-            try {
-                // Clear previous results
-                resetAiView();
-                elements.btnGenerateAi.style.display = 'none';
-                elements.resultSection.style.display = 'none';
 
-                const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product_name: name })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.detail || 'Generation failed');
+            if (referenceImageBase64) {
+                // --- Reference mode ---
+                const prompt = elements.customPrompt.value.trim();
+                if (!prompt) {
+                    elements.btnGenerate.disabled = false;
+                    return showToast('Please enter a prompt', 'error');
+                }
+                elements.genText.innerText = 'Generating...';
+                try {
+                    const response = await fetch('/api/generate-from-reference', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            product_name: name,
+                            reference_image: referenceImageBase64,
+                            prompt: prompt,
+                            mime_type: referenceImageMimeType
+                        })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail || 'Generation failed');
+
+                    currentState.mode = 'reference';
+                    currentState.productId = data.product_id;
+                    currentState.aiImage = data.generated_image;
+
+                    elements.foundTitle.innerText = data.title;
+                    elements.displayId.innerText = data.product_id || 'NOT FOUND';
+                    elements.refResultImg.src = 'data:image/png;base64,' + data.generated_image;
+
+                    elements.comparisonGrid.style.display = 'none';
+                    elements.refResultGrid.style.display = 'flex';
+                    elements.btnGenerateAi.style.display = 'none';
+                    elements.resultSection.style.display = 'flex';
+
+                    elements.totalGen.innerText = data.stats.total_generated;
+                    showToast('Image generated from reference!');
+                } catch (e) {
+                    showToast(e.message, 'error');
+                } finally {
+                    elements.btnGenerate.disabled = false;
+                    elements.genText.innerText = 'Generate from Reference';
+                }
+            } else {
+                // --- Normal mode ---
+                elements.genText.innerText = 'Thinking...';
+                try {
+                    resetAiView();
+                    elements.btnGenerateAi.style.display = 'none';
+                    elements.resultSection.style.display = 'none';
+
+                    const response = await fetch('/api/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ product_name: name })
+                    });
+                    const data = await response.json();
+                    if (!response.ok) throw new Error(data.detail || 'Generation failed');
 
                     currentState.mode = 'normal';
                     currentState.images = data.images;
-                    currentState.aiImage = data.ai_image;
+                    currentState.aiImage = null;
                     currentState.currentIndex = 0;
                     currentState.productId = data.product_id;
 
-                elements.foundTitle.innerText = data.title;
-                elements.displayId.innerText = data.product_id || 'NOT FOUND';
-                
-                elements.resultSection.style.display = 'flex';
-                elements.btnGenerateAi.style.display = 'block';
-                
-                if (currentState.images.length > 0) {
-                    selectSource('search');
-                    updateImageDisplay();
-                } else {
-                    elements.previewImg.style.display = 'none';
-                    elements.totalCount.innerText = '0';
-                    elements.currentIdx.innerText = '0';
-                    showToast('No search images found. Try Generating AI Image.', 'warning');
+                    elements.foundTitle.innerText = data.title;
+                    elements.displayId.innerText = data.product_id || 'NOT FOUND';
+
+                    elements.comparisonGrid.style.display = 'grid';
+                    elements.refResultGrid.style.display = 'none';
+                    elements.resultSection.style.display = 'flex';
+                    elements.btnGenerateAi.style.display = 'block';
+
+                    if (currentState.images.length > 0) {
+                        selectSource('search');
+                        updateImageDisplay();
+                    } else {
+                        elements.previewImg.style.display = 'none';
+                        elements.totalCount.innerText = '0';
+                        elements.currentIdx.innerText = '0';
+                    }
+                    showToast('Search results ready!');
+                } catch (e) {
+                    showToast(e.message, 'error');
+                } finally {
+                    elements.btnGenerate.disabled = false;
+                    elements.genText.innerText = 'Generate Options';
                 }
-                
-                showToast('Search results ready!');
-            } catch (e) {
-                showToast(e.message, 'error');
-            } finally {
-                elements.btnGenerate.disabled = false;
-                document.getElementById('gen-text').innerText = 'Generate Options';
             }
         };
 
