@@ -49,35 +49,10 @@ def update_stats(generated=0, approved=0):
     except:
         pass # Vercel functions are read-only except for /tmp, so this might fail in lambda
 
-def search_product(title):
-    url = f"{SHOPIFY_SHOP_URL}/admin/api/2024-01/products.json"
-    headers = {
-        "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
-        "Content-Type": "application/json"
-    }
-    params = {
-        "title": title
-    }
-    try:
-        response = requests.get(url, headers=headers, params=params, timeout=10)
-        if response.status_code == 200:
-            products = response.json().get('products', [])
-            return products[0] if products else None
-        else:
-            print(f"Error searching Shopify: {response.status_code} - {response.text}")
-            return None
-    except Exception as e:
-        print(f"Exception searching Shopify: {e}")
-        return None
 
 class GenerateRequest(BaseModel):
     product_name: str
-
-class GenerateFromReferenceRequest(BaseModel):
-    product_name: str
-    reference_image: str  # base64-encoded image data
-    prompt: str
-    mime_type: str = "image/jpeg"
+    start: int = 0
 
 class ApproveRequest(BaseModel):
     product_id: Any
@@ -104,67 +79,26 @@ def get_all_stats():
 
 @app.post("/api/generate")
 def generate_images(request: GenerateRequest):
-    # 1. Run Search Query generation and Shopify search in parallel
-    with ThreadPoolExecutor() as exe:
-        future_params = exe.submit(processor.get_ai_search_params, request.product_name)
-        future_shopify = exe.submit(search_product, request.product_name)
-        
-        params = future_params.result()
-        found_res = future_shopify.result()
-
-    if not params:
-        raise HTTPException(status_code=500, detail="Gemini failed to generate search query")
-    
-    found_id = found_res['id'] if found_res else None
+    # 1. Search Shopify for product ID
+    found_id = processor.find_shopify_product_by_name(request.product_name)
     if not found_id:
         print(f"  Warning: Product '{request.product_name}' not found in Shopify.")
 
-    # 2. Run SerpAPI search
+    # 2. Run SerpAPI search with pagination (using raw product_name)
     with ThreadPoolExecutor() as exe:
-        future_serp = exe.submit(processor.fetch_images_from_serpapi, params['search_query'])
+        future_serp = exe.submit(processor.fetch_images_from_serpapi, request.product_name, request.start)
         images = future_serp.result()
     
     if not images:
-        # We don't fail here if no images are found, as the user might want to generate AI image later
-        print(f"  Warning: No search images found for '{request.product_name}'")
+        print(f"  Warning: No search images found for '{request.product_name}' at start={request.start}")
     
     update_stats(generated=1)
     
     return {
-        "title": params['title'],
-        "search_query": params['search_query'],
+        "title": request.product_name,
+        "search_query": request.product_name,
         "images": images,
         "product_id": found_id,
-        "stats": get_stats()
-    }
-
-@app.post("/api/generate-ai")
-def generate_ai_only(request: GenerateRequest):
-    ai_image = processor.generate_ai_image(request.product_name)
-    if not ai_image:
-        raise HTTPException(status_code=500, detail="Gemini failed to generate AI image")
-    update_stats(generated=1)
-    return {"ai_image": ai_image, "stats": get_stats()}
-
-@app.post("/api/generate-from-reference")
-async def generate_from_reference(request: GenerateFromReferenceRequest):
-    found_id = processor.find_shopify_product_by_name(request.product_name)
-
-    generated_image = processor.generate_image_from_reference(
-        reference_image_base64=request.reference_image,
-        prompt=request.prompt,
-        mime_type=request.mime_type
-    )
-
-    if not generated_image:
-        raise HTTPException(status_code=500, detail="Gemini failed to generate image from reference")
-
-    update_stats(generated=1)
-
-    return {
-        "product_id": found_id,
-        "generated_image": generated_image,
-        "title": request.product_name,
         "stats": get_stats()
     }
 

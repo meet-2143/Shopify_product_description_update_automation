@@ -78,79 +78,16 @@ class ImageWorkflowProcessor:
             except Exception as e:
                 pass # Silently proceed if credentials are not set up
 
-    def get_ai_search_params(self, product_title: str) -> dict:
-        """Replicates 'AI Agent' node from n8n."""
-        # Note: Your API key uniquely supports 'gemini-2.5-flash' in v1beta
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
-        
-        system_message = """You are an Indian grocery e-commerce assistant.
-From the user's input, identify the specific grocery product. 
 
-The product can belong to:
-- Grocery (food, beverages, staples, snacks, dairy, etc.)
-- Home Care (detergents, cleaners, dishwash, toilet cleaner, floor cleaner, etc.)
-- Kitchen Expenditure (kitchen utilities & consumables such as aluminium foil, cling wrap, butter paper, tissue paper, garbage bags, scrubbers, storage bags, matchbox, candles, etc.)
-- Religious & Pooja Items
-(agarbatti/incense sticks, dhoop, sambrani, camphor/kapoor, diya, oil for lamps, pooja samagri kits, ghee for pooja, havan samagri, cotton wicks, sacred powders, etc.)
-
-Home & Decor / Pooja Accessories (Non-Consumable)
-(brass bowls, pooja thali, diya, kalash, idols, decorative utensils, lamps, metal décor items)
-Return ONLY a raw JSON object with a single best-match variant.
-The search_query must be optimized for Google Images to find a clean product shot. 
-Include keywords like "product packaging", "white background", and "high resolution".
-
-Format:
-{
-  "product": "name",
-  "variant": {
-      "title": "Brand + Variant + Weight",
-      "search_query": "Exact Brand Name Product Packaging white background"
-  }
-}"""
-
-        prompt = f"Product Title: {product_title}"
-        
-        payload = {
-            "contents": [{
-                "parts": [{"text": f"{system_message}\n\nTask:\n{prompt}"}]
-            }]
-        }
-
-        try:
-            response = self.session.post(url, json=payload, timeout=30)
-            response.raise_for_status()
-            data = response.json()
-            
-            raw_output = data['candidates'][0]['content']['parts'][0]['text'].strip()
-            
-            # Replicate 'Code in JavaScript' n8n logic
-            raw_output = re.sub(r'```json', '', raw_output)
-            raw_output = re.sub(r'```', '', raw_output).strip()
-            
-            parsed = json.loads(raw_output)
-            variant = parsed.get("variant")
-            if not variant:
-                return None
-                
-            search_query = variant.get("search_query", "")
-            # n8n: query = query.replace(/[^\w\s]/gi, ' ');
-            search_query = re.sub(r'[^\w\s]', ' ', search_query).strip()
-            
-            return {
-                "title": variant.get("title", product_title),
-                "search_query": search_query
-            }
-        except Exception as e:
-            print(f"  Error in AI Agent for '{product_title}': {e}")
-            return None
-
-    def fetch_images_from_serpapi(self, search_query: str) -> list:
-        """Fetch all image results from SerpAPI."""
+    def fetch_images_from_serpapi(self, search_query: str, start: int = 0) -> list:
+        """Fetch image results from SerpAPI with pagination."""
         url = "https://serpapi.com/search.json"
         params = {
             "q": search_query,
             "api_key": SERPAPI_KEY,
-            "engine": "google_images"
+            "engine": "google_images",
+            "ijn": start // 100, # SerpApi uses ijn for page index (0=0-99, 1=100-199)
+            "start": start
         }
         try:
             response = self.session.get(url, params=params, timeout=30)
@@ -166,76 +103,13 @@ Format:
             print(f"  Error in SerpAPI for '{search_query}': {e}")
             return []
 
-    def generate_ai_image(self, prompt: str) -> str:
-        """Generates a product image using Gemini 3.1 Flash Image Preview SDK structure."""
-        if not self.genai_client:
-            print("  GenAI Client not initialized.")
-            return ""
 
-        full_prompt = (
-            f"Create a professional product photography image of {prompt}. "
-            "Clean white background, high resolution, single product, studio lighting.",
-        )
-
-        try:
-            # Using the exact structure provided by the user
-            response = self.genai_client.models.generate_content(
-                model="gemini-3.1-flash-image-preview",
-                contents=full_prompt,
-            )
-
-            import base64
-            for part in response.parts:
-                # Based on the user's snippet structure
-                if part.inline_data is not None:
-                    # Return base64 for preview
-                    return base64.b64encode(part.inline_data.data).decode('utf-8')
-            
-            return ""
-        except Exception as e:
-            print(f"Error generating with Gemini 3.1 SDK: {e}")
-            return ""
-
-    def host_image_in_supabase(self, base64_data: str, product_id: str, product_name: str) -> str:
-        """Hosts an AI image in Supabase storage and returns the public URL."""
-        if not self.supabase or not base64_data:
-            return ""
-
-        try:
-            import base64
-            image_bytes = base64.b64decode(base64_data)
-            filename = f"ai_{product_id}_{uuid.uuid4().hex[:8]}.png"
-            filepath = f"ai_generated/{filename}"
-            
-            # Upload to 'product-images' bucket
-            self.supabase.storage.from_("product-images").upload(
-                path=filepath,
-                file=image_bytes,
-                file_options={"content-type": "image/png"}
-            )
-            
-            # 3. Get public URL
-            public_url = self.supabase.storage.from_("product-images").get_public_url(filepath)
-            
-            # 4. Log to database (Optional: don't fail if this fails due to RLS)
-            try:
-                self.supabase.table("ai_generated_images").insert({
-                    "product_id": product_id,
-                    "product_name": product_name,
-                    "image_url": public_url,
-                    "source": "gemini-3.1-flash"
-                }).execute()
-            except Exception as log_err:
-                print(f"  Note: Logging image to Supabase database failed (likely RLS): {log_err}")
-                # We still return the public_url so Shopify can be updated
-            
-            return public_url
-        except Exception as e:
-            print(f"Error hosting in Supabase storage: {e}")
-            return ""
 
     def update_shopify_product_image(self, product_id: str, image_source: str, is_base64: bool = False) -> bool:
         """Updates the Shopify product image. Using PUT replaces all existing images with this one."""
+        if not SHOPIFY_SHOP_URL:
+            print("  Error: SHOPIFY_SHOP_URL is not set. Check your .env file.")
+            return False
         shop_url = SHOPIFY_SHOP_URL.rstrip('/')
         # Use Product PUT endpoint to replace existing images
         url = f"{shop_url}/admin/api/2024-01/products/{product_id}.json"
@@ -283,7 +157,15 @@ Format:
         1. Full name as-is
         2. Each hyphen-separated part (longest first)
         """
-        shop_url = SHOPIFY_SHOP_URL.rstrip('/')
+        if not SHOPIFY_SHOP_URL:
+            print("  Error: SHOPIFY_SHOP_URL is not set. Check your Vercel Environment Variables.")
+            return None
+            
+        shop_url = SHOPIFY_SHOP_URL.strip().rstrip('/')
+        if not shop_url.startswith('http'):
+            shop_url = f"https://{shop_url}"
+        
+        print(f"  Searching Shopify for '{product_name}' at {shop_url}...")
         url = f"{shop_url}/admin/api/2024-01/products.json"
         headers = {
             "X-Shopify-Access-Token": SHOPIFY_ACCESS_TOKEN,
@@ -327,24 +209,20 @@ Format:
             print(f"  Error archiving to sheet: {e}")
 
     def process_item(self, product_id: str, title: str, department: str):
-        """Standard processing loop for one item."""
-        # n8n: Wait 4 seconds
+        """Standard processing loop for one item (AI-free)."""
+        # Wait 4 seconds
         time.sleep(4)
         
         print(f"\nEvaluating: '{title}' (ID: {product_id})")
         
-        # AI Step
-        print("  Generating optimized search params...")
-        params = self.get_ai_search_params(title)
-        if not params:
-            return
-        
-        # Image Step
-        print(f"  Searching image for: '{params['search_query']}'")
-        image_url = self.fetch_image_from_serpapi(params['search_query'])
-        if not image_url:
+        # Image Step (Search using raw title instead of AI params)
+        print(f"  Searching image for: '{title}'")
+        images = self.fetch_images_from_serpapi(title)
+        if not images:
             print("  No image found.")
             return
+        
+        image_url = images[0] # Take first result for automated workflow
         
         # Shopify Step
         print(f"  Found: {image_url}")
@@ -356,41 +234,11 @@ Format:
         
         # Archival Step
         print("  Archiving to sheet...")
-        self.archive_entry_to_sheet(params.get("title", title), department)
+        self.archive_entry_to_sheet(title, department)
         
-        # n8n: Wait 3 seconds
+        # Wait 3 seconds
         time.sleep(3)
 
-    def generate_image_from_reference(self, reference_image_base64: str, prompt: str, mime_type: str = "image/jpeg") -> str:
-        """Generates a new product image using a reference image and custom prompt via Gemini."""
-        if not self.genai_client:
-            print("  GenAI Client not initialized.")
-            return ""
-        try:
-            import base64
-            from google.genai import types
-
-            image_bytes = base64.b64decode(reference_image_base64)
-
-            response = self.genai_client.models.generate_content(
-                model="gemini-3.1-flash-image-preview",
-                contents=[
-                    types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
-                    types.Part.from_text(text=prompt)
-                ],
-                config=types.GenerateContentConfig(
-                    response_modalities=["IMAGE", "TEXT"]
-                )
-            )
-
-            for part in response.parts:
-                if part.inline_data is not None:
-                    return base64.b64encode(part.inline_data.data).decode('utf-8')
-
-            return ""
-        except Exception as e:
-            print(f"Error generating image from reference: {e}")
-            return ""
 
     def run_full_workflow(self):
         """The full automated batching logic from n8n."""

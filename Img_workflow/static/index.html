@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Workflow - Smart Product Update</title>
+    <title>Image Search - Shopify Product Update</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
@@ -42,7 +42,7 @@
 
         .container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             z-index: 1;
         }
 
@@ -76,17 +76,11 @@
             margin-bottom: 2rem;
         }
 
-        .input-group {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
         .field {
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
 
         label {
@@ -147,71 +141,215 @@
             transform: none;
         }
 
-        /* Result Section */
+        .search-box {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .search-box .btn-primary {
+            width: auto;
+            min-width: 200px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .stat-item:last-child .stat-value {
+            color: var(--success);
+        }
+
+        /* Image Grid Section */
         #result-section {
             display: none;
             flex-direction: column;
             animation: fadeIn 0.5s ease;
         }
 
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .layout-wrapper {
+            display: flex;
             gap: 2rem;
-            margin: 1.5rem 0;
+            margin-top: 1.5rem;
+            align-items: flex-start;
         }
 
-        @media (max-width: 768px) {
-            .comparison-grid {
-                grid-template-columns: 1fr;
-            }
+        .image-grid-column {
+            flex: 1;
         }
 
-        .side-card {
+        .preview-column {
+            width: 400px;
+            position: sticky;
+            top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+
+        .grid-item {
             background: rgba(15, 23, 42, 0.3);
             border: 2px solid transparent;
             border-radius: 1rem;
-            padding: 1.5rem;
+            padding: 0.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .side-card.selected {
-            border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.05);
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
-        }
-
-        .side-label {
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-            color: var(--text-muted);
-        }
-
-        .side-card.selected .side-label {
-            color: var(--primary);
-        }
-
-        .image-container {
-            width: 100%;
             aspect-ratio: 1/1;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
-            border: 1px solid var(--glass-border);
             position: relative;
         }
 
-        .image-container img {
+        .grid-item img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .preview-overlay {
+            position: absolute;
+            inset: 0.5rem;
+            background: rgba(139, 92, 246, 0.2);
+            backdrop-filter: blur(1px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 0.75rem;
+            pointer-events: none;
+        }
+
+        /* Sidebar Big Preview Box */
+        .big-preview-box {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .big-preview-box.empty {
+            border-style: dashed;
+            opacity: 0.5;
+        }
+
+        .big-preview-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 1rem;
+        }
+
+        @media (max-width: 1100px) {
+            .layout-wrapper {
+                flex-direction: column;
+            }
+            .preview-column {
+                width: 100%;
+                position: relative;
+                top: 0;
+                order: -1;
+            }
+            .big-preview-box {
+                aspect-ratio: 16/9;
+                height: auto;
+            }
+        }
+
+        .grid-item:hover .preview-overlay {
+            opacity: 1;
+        }
+
+        .preview-icon {
+            background: white;
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            font-size: 1.2rem;
+            transform: translateY(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .grid-item:hover .preview-icon {
+            transform: translateY(0);
+        }
+
+        .grid-item.selected {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .grid-item.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
 
         .shimmer {
@@ -228,19 +366,18 @@
             100% { background-position: 200% 0; }
         }
 
-        .controls {
-            display: flex;
-            gap: 0.75rem;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        .btn-secondary {
+        .btn-load-more {
             background: rgba(255, 255, 255, 0.05);
             color: var(--text);
             border: 1px solid var(--glass-border);
-            flex: 1;
-            font-size: 0.85rem;
+            margin: 1rem auto;
+            width: auto;
+            min-width: 200px;
+        }
+
+        .btn-load-more:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
         }
 
         .btn-success {
@@ -249,6 +386,7 @@
             width: 100%;
             margin-top: 1.5rem;
             padding: 1.25rem;
+            font-size: 1.1rem;
         }
 
         .btn-success:hover {
@@ -257,10 +395,10 @@
             box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
         }
 
-        .pagination {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
+        .btn-success:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         #toast {
@@ -286,194 +424,65 @@
             text-align: center;
         }
 
-        .divider {
-            border: none;
-            border-top: 1px solid var(--glass-border);
-            margin: 1.5rem 0;
-        }
-
-        .section-tag {
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .upload-zone {
-            border: 2px dashed var(--glass-border);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            background: rgba(15, 23, 42, 0.3);
-        }
-
-        .upload-zone:hover, .upload-zone.dragover {
-            border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.05);
-        }
-
-        .upload-zone input[type="file"] {
-            position: absolute;
-            inset: 0;
-            opacity: 0;
-            cursor: pointer;
-            width: 100%;
-            height: 100%;
-        }
-
-        .upload-placeholder {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            pointer-events: none;
-        }
-
-        .upload-placeholder span {
-            color: var(--primary);
-        }
-
-        #ref-image-preview {
-            width: 100%;
-            max-height: 180px;
-            object-fit: contain;
-            border-radius: 0.5rem;
-            display: none;
-        }
-
-        textarea {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--glass-border);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            color: var(--text);
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            width: 100%;
-            resize: vertical;
-            min-height: 80px;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
-        }
-
-        .ref-result-grid {
-            display: flex;
-            justify-content: center;
-            margin: 1.5rem 0;
-        }
-
-        .ref-result-grid .side-card {
-            max-width: 480px;
-            width: 100%;
-            cursor: default;
-            border-color: var(--primary);
-            background: rgba(139, 92, 246, 0.05);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Image Workflow</h1>
-            <p class="subtitle">Search and Generate Product Images with Gemini 2.5 Pro</p>
-        </header>
-
-        <div class="card">
-            <div id="stats-bar" style="display: flex; gap: 1rem; margin-bottom: 2rem; font-size: 0.85rem; color: var(--text-muted);">
-                <div class="stat-item">Total Images: <span id="total-gen" style="color: var(--primary); font-weight: 600;">0</span></div>
-                <div class="stat-item">Shopify Updates: <span id="total-app" style="color: var(--success); font-weight: 600;">0</span></div>
-            </div>
-            
-            <div class="field" style="margin-bottom: 1.5rem;">
-                <label for="product_name">Product Name</label>
-                <input type="text" id="product_name" placeholder="Enter product name (e.g. PATANJALI-DAMRU GLASS-400ML)">
-            </div>
-
-            <hr class="divider">
-            <div class="section-tag">Reference Image Generation (Optional)</div>
-
-            <div class="field" style="margin-bottom: 1.5rem;">
-                <label>Reference Image</label>
-                <div class="upload-zone" id="upload-zone">
-                    <input type="file" id="ref-image-input" accept="image/*">
-                    <img id="ref-image-preview" alt="Reference preview">
-                    <div class="upload-placeholder" id="upload-placeholder">
-                        Click or drag &amp; drop an image &bull; <span>Browse</span>
-                    </div>
+            <h1>Product Image Search</h1>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-label">Generated</span>
+                    <span id="total-gen" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Approved</span>
+                    <span id="total-app" class="stat-value">0</span>
                 </div>
             </div>
+        </header>
 
-            <div class="field" style="margin-bottom: 1.5rem;">
-                <label for="custom-prompt">Prompt</label>
-                <textarea id="custom-prompt" placeholder="e.g. Keep the same product but use a clean white background, studio lighting, high resolution packaging shot"></textarea>
-            </div>
-
-            <button id="btn-generate" class="btn-primary">
-                <span id="gen-text">Generate Options</span>
+        <div class="search-box">
+            <input type="text" id="product_name" placeholder="Enter product name (e.g. Master Makki Roti)">
+            <button id="btn-search" class="btn-primary">
+                <span id="search-text">Search Images</span>
             </button>
         </div>
 
-        <div id="result-section" class="card">
-            <div id="product-meta" style="text-align: center; margin-bottom: 1rem;">
+        <div id="result-section">
+            <div id="product-info" style="text-align: center; margin-bottom: 2rem;">
                 <div id="found-title" style="font-weight: 600; color: var(--primary); font-size: 1.2rem;"></div>
                 <div id="found-id" style="font-size: 0.85rem; color: var(--text-muted);">ID: <span id="display-id"></span></div>
             </div>
 
-            <button id="btn-generate-ai" class="btn-primary" style="display:none; margin-bottom: 1rem; background: rgba(139,92,246,0.2); border: 1px solid var(--primary);">
-                <span id="gen-ai-text">Generate AI Image</span>
-            </button>
+            <div class="layout-wrapper">
+                <div class="image-grid-column">
+                    <div class="image-grid" id="image-grid">
+                        <!-- Images will be injected here -->
+                    </div>
 
-            <!-- Normal mode: comparison grid -->
-            <div class="comparison-grid" id="comparison-grid">
-                <!-- AI Side -->
-                <div class="side-card" id="ai-side" onclick="selectSource('ai')">
-                    <div class="side-label">AI Generated (Gemini 3 Flash) ✨</div>
-                    <div class="image-container">
-                        <div id="ai-shimmer" class="shimmer" style="display: none;"></div>
-                        <div id="ai-placeholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 1rem;">
-                            Click "Generate AI Image" above to create an AI version
+                    <button id="btn-load-more" class="btn-load-more" style="display: none;">
+                        Load More Images
+                    </button>
+                </div>
+
+                <div class="preview-column">
+                    <div id="bigPreviewBox" class="big-preview-box empty">
+                        <img id="bigPreviewImg" src="" alt="Preview" style="display: none;">
+                        <div id="previewPlaceholder" style="color: var(--text-muted); text-align: center;">
+                            Hover over an image<br>to preview
                         </div>
-                        <img id="ai-img" src="" alt="AI Generated" style="display: none;">
                     </div>
-                    <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--text-muted);">Custom created for this product</div>
-                </div>
 
-                <!-- Search Side -->
-                <div class="side-card" id="search-side" onclick="selectSource('search')">
-                    <div class="side-label">Found Online (SerpAPI)</div>
-                    <div class="pagination">Image <span id="current-idx">1</span> of <span id="total-count">0</span></div>
-                    <div class="image-container">
-                        <div id="img-shimmer" class="shimmer"></div>
-                        <img id="preview-img" alt="Search result">
-                    </div>
-                    <div class="controls">
-                        <button id="btn-prev" class="btn-secondary">Prev</button>
-                        <button id="btn-next" class="btn-secondary">Next</button>
-                    </div>
+                    <button id="btn-approve" class="btn-success" disabled>
+                        Approve &amp; Update Shopify
+                    </button>
                 </div>
             </div>
-
-            <!-- Reference mode: single centered image -->
-            <div class="ref-result-grid" id="ref-result-grid" style="display:none;">
-                <div class="side-card">
-                    <div class="side-label">Generated from Reference ✨</div>
-                    <div class="image-container">
-                        <img id="ref-result-img" alt="Generated from reference">
-                    </div>
-                </div>
-            </div>
-
-            <button id="btn-approve" class="btn-success">
-                Approve &amp; Update Shopify
-            </button>
         </div>
     </div>
 
@@ -482,116 +491,43 @@
     </div>
 
     <footer class="footer">
-        Powered by Gemini 2.5 Pro & Imagen 3 &bull; Apna Indian Bazaar Suite
+        Powered by SerpApi &bull; Apna Indian Bazaar Suite
     </footer>
 
     <script>
         let currentState = {
             images: [],
-            aiImage: null,
-            currentIndex: 0,
+            selectedImage: null,
             productId: null,
-            selectedSource: 'ai',
-            mode: 'normal' // 'normal' | 'reference'
+            productName: '',
+            currentStart: 0,
+            searchQuery: ''
         };
-
-        let referenceImageBase64 = null;
-        let referenceImageMimeType = 'image/jpeg';
 
         const elements = {
             productName: document.getElementById('product_name'),
-            btnGenerate: document.getElementById('btn-generate'),
-            genText: document.getElementById('gen-text'),
+            btnSearch: document.getElementById('btn-search'),
+            searchText: document.getElementById('search-text'),
             resultSection: document.getElementById('result-section'),
-            comparisonGrid: document.getElementById('comparison-grid'),
-            refResultGrid: document.getElementById('ref-result-grid'),
-            refResultImg: document.getElementById('ref-result-img'),
-            previewImg: document.getElementById('preview-img'),
-            aiImg: document.getElementById('ai-img'),
-            imgShimmer: document.getElementById('img-shimmer'),
-            aiShimmer: document.getElementById('ai-shimmer'),
-            searchSide: document.getElementById('search-side'),
-            aiSide: document.getElementById('ai-side'),
+            imageGrid: document.getElementById('image-grid'),
+            btnLoadMore: document.getElementById('btn-load-more'),
             foundTitle: document.getElementById('found-title'),
             displayId: document.getElementById('display-id'),
-            btnGenerateAi: document.getElementById('btn-generate-ai'),
-            genAiText: document.getElementById('gen-ai-text'),
-            aiPlaceholder: document.getElementById('ai-placeholder'),
-            currentIdx: document.getElementById('current-idx'),
-            totalCount: document.getElementById('total-count'),
-            btnPrev: document.getElementById('btn-prev'),
-            btnNext: document.getElementById('btn-next'),
             btnApprove: document.getElementById('btn-approve'),
+                bigPreviewBox: document.getElementById('bigPreviewBox'),
+                bigPreviewImg: document.getElementById('bigPreviewImg'),
+                previewPlaceholder: document.getElementById('previewPlaceholder'),
             toast: document.getElementById('toast'),
             toastMsg: document.getElementById('toast-msg'),
             totalGen: document.getElementById('total-gen'),
-            totalApp: document.getElementById('total-app'),
-            uploadZone: document.getElementById('upload-zone'),
-            refImageInput: document.getElementById('ref-image-input'),
-            refImagePreview: document.getElementById('ref-image-preview'),
-            uploadPlaceholder: document.getElementById('upload-placeholder'),
-            customPrompt: document.getElementById('custom-prompt')
+            totalApp: document.getElementById('total-app')
         };
-
-        // --- Reference image upload ---
-        elements.refImageInput.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            referenceImageMimeType = file.type || 'image/jpeg';
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const result = e.target.result;
-                referenceImageBase64 = result.split(',')[1];
-                elements.refImagePreview.src = result;
-                elements.refImagePreview.style.display = 'block';
-                elements.uploadPlaceholder.style.display = 'none';
-                elements.genText.innerText = 'Generate from Reference';
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Drag and drop support
-        elements.uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); elements.uploadZone.classList.add('dragover'); });
-        elements.uploadZone.addEventListener('dragleave', () => elements.uploadZone.classList.remove('dragover'));
-        elements.uploadZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            elements.uploadZone.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            if (!file || !file.type.startsWith('image/')) return;
-            elements.refImageInput.files = e.dataTransfer.files;
-            elements.refImageInput.dispatchEvent(new Event('change'));
-        });
 
         function showToast(message, type = 'success') {
             elements.toastMsg.innerText = message;
             elements.toast.style.borderColor = type === 'success' ? 'var(--success)' : 'var(--error)';
             elements.toast.classList.add('show');
             setTimeout(() => elements.toast.classList.remove('show'), 3000);
-        }
-
-        function selectSource(source) {
-            currentState.selectedSource = source;
-            if (source === 'ai') {
-                elements.aiSide.classList.add('selected');
-                elements.searchSide.classList.remove('selected');
-            } else {
-                elements.searchSide.classList.add('selected');
-                elements.aiSide.classList.remove('selected');
-            }
-        }
-
-        function updateImageDisplay() {
-            if (currentState.images.length === 0) return;
-            const url = currentState.images[currentState.currentIndex];
-            elements.previewImg.style.display = 'none';
-            elements.imgShimmer.style.display = 'block';
-            elements.previewImg.src = url;
-            elements.previewImg.onload = () => {
-                elements.imgShimmer.style.display = 'none';
-                elements.previewImg.style.display = 'block';
-            };
-            elements.currentIdx.innerText = currentState.currentIndex + 1;
-            elements.totalCount.innerText = currentState.images.length;
         }
 
         async function fetchInitialStats() {
@@ -604,181 +540,153 @@
         }
         fetchInitialStats();
 
-        // Helper to reset AI view
-        function resetAiView() {
-            elements.aiImg.style.display = 'none';
-            elements.aiPlaceholder.style.display = 'flex';
-            elements.aiShimmer.style.display = 'none';
-            currentState.aiImage = null;
+        function selectImage(url, element) {
+            currentState.selectedImage = url;
+            
+            // UI Update
+            document.querySelectorAll('.grid-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            elements.btnApprove.disabled = false;
         }
 
-        elements.btnGenerate.onclick = async () => {
+        function renderImages(images, append = false) {
+            if (!append) elements.imageGrid.innerHTML = '';
+            
+            images.forEach(url => {
+                const item = document.createElement('div');
+                item.className = 'grid-item';
+                item.onclick = () => selectImage(url, item);
+                
+                // Big Preview Logic on Hover (Sidebar)
+                item.onmouseenter = () => {
+                    elements.bigPreviewImg.src = url;
+                    elements.bigPreviewImg.style.display = 'block';
+                    elements.previewPlaceholder.style.display = 'none';
+                    elements.bigPreviewBox.classList.remove('empty');
+                };
+                
+                // Keep the last hovered image visible, or clear on mouseleave
+                // User said "in the side section as before", which usually stays visible or resets.
+                // I'll keep the last hovered one.
+                
+                const img = document.createElement('img');
+                img.src = url;
+                img.loading = 'lazy';
+                
+                const shimmer = document.createElement('div');
+                shimmer.className = 'shimmer';
+                
+                const overlay = document.createElement('div');
+                overlay.className = 'preview-overlay';
+                overlay.innerHTML = '<div class="preview-icon">🔍</div>';
+                
+                item.appendChild(shimmer);
+                item.appendChild(img);
+                item.appendChild(overlay);
+                
+                img.onload = () => shimmer.remove();
+                img.onerror = () => item.remove(); // Remove failed images
+                
+                elements.imageGrid.appendChild(item);
+            });
+
+            if (images.length === 20) {
+                elements.btnLoadMore.style.display = 'flex';
+            } else {
+                elements.btnLoadMore.style.display = 'none';
+            }
+        }
+
+        elements.btnSearch.onclick = async () => {
             const name = elements.productName.value.trim();
             if (!name) return showToast('Please enter a product name', 'error');
 
-            elements.btnGenerate.disabled = true;
+            elements.btnSearch.disabled = true;
+            elements.searchText.innerText = 'Searching...';
+            elements.resultSection.style.display = 'none';
+            elements.btnApprove.disabled = true;
+            currentState.currentStart = 0;
+            currentState.selectedImage = null;
 
-            if (referenceImageBase64) {
-                // --- Reference mode ---
-                const prompt = elements.customPrompt.value.trim();
-                if (!prompt) {
-                    elements.btnGenerate.disabled = false;
-                    return showToast('Please enter a prompt', 'error');
-                }
-                elements.genText.innerText = 'Generating...';
-                try {
-                    const response = await fetch('/api/generate-from-reference', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            product_name: name,
-                            reference_image: referenceImageBase64,
-                            prompt: prompt,
-                            mime_type: referenceImageMimeType
-                        })
-                    });
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.detail || 'Generation failed');
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ product_name: name, start: 0 })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail || 'Search failed');
 
-                    currentState.mode = 'reference';
-                    currentState.productId = data.product_id;
-                    currentState.aiImage = data.generated_image;
+                currentState.productId = data.product_id;
+                currentState.productName = data.title;
+                currentState.searchQuery = data.search_query;
+                
+                elements.foundTitle.innerText = data.title;
+                elements.displayId.innerText = data.product_id || 'NOT FOUND';
 
-                    elements.foundTitle.innerText = data.title;
-                    elements.displayId.innerText = data.product_id || 'NOT FOUND';
-                    elements.refResultImg.src = 'data:image/png;base64,' + data.generated_image;
+                // Display first 20
+                renderImages(data.images.slice(0, 20));
+                currentState.images = data.images;
+                
+                elements.resultSection.style.display = 'flex';
+                elements.totalGen.innerText = data.stats.total_generated;
+                showToast('Search results ready!');
+            } catch (e) {
+                showToast(e.message, 'error');
+            } finally {
+                elements.btnSearch.disabled = false;
+                elements.searchText.innerText = 'Search Images';
+            }
+        };
 
-                    elements.comparisonGrid.style.display = 'none';
-                    elements.refResultGrid.style.display = 'flex';
-                    elements.btnGenerateAi.style.display = 'none';
-                    elements.resultSection.style.display = 'flex';
+        elements.btnLoadMore.onclick = async () => {
+            elements.btnLoadMore.disabled = true;
+            elements.btnLoadMore.innerText = 'Loading...';
+            
+            currentState.currentStart += 20;
 
-                    elements.totalGen.innerText = data.stats.total_generated;
-                    showToast('Image generated from reference!');
-                } catch (e) {
-                    showToast(e.message, 'error');
-                } finally {
-                    elements.btnGenerate.disabled = false;
-                    elements.genText.innerText = 'Generate from Reference';
-                }
-            } else {
-                // --- Normal mode ---
-                elements.genText.innerText = 'Thinking...';
-                try {
-                    resetAiView();
-                    elements.btnGenerateAi.style.display = 'none';
-                    elements.resultSection.style.display = 'none';
-
+            try {
+                // Check if we already have more images in the local buffer (since SerpApi returns 100)
+                if (currentState.images.length > currentState.currentStart) {
+                    const nextBatch = currentState.images.slice(currentState.currentStart, currentState.currentStart + 20);
+                    renderImages(nextBatch, true);
+                } else {
+                    // Need to fetch from API
                     const response = await fetch('/api/generate', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ product_name: name })
+                        body: JSON.stringify({ 
+                            product_name: elements.productName.value.trim(), 
+                            start: currentState.currentStart 
+                        })
                     });
                     const data = await response.json();
-                    if (!response.ok) throw new Error(data.detail || 'Generation failed');
+                    if (!response.ok) throw new Error(data.detail || 'Failed to load more');
 
-                    currentState.mode = 'normal';
-                    currentState.images = data.images;
-                    currentState.aiImage = null;
-                    currentState.currentIndex = 0;
-                    currentState.productId = data.product_id;
-
-                    elements.foundTitle.innerText = data.title;
-                    elements.displayId.innerText = data.product_id || 'NOT FOUND';
-
-                    elements.comparisonGrid.style.display = 'grid';
-                    elements.refResultGrid.style.display = 'none';
-                    elements.resultSection.style.display = 'flex';
-                    elements.btnGenerateAi.style.display = 'block';
-
-                    if (currentState.images.length > 0) {
-                        selectSource('search');
-                        updateImageDisplay();
-                    } else {
-                        elements.previewImg.style.display = 'none';
-                        elements.totalCount.innerText = '0';
-                        elements.currentIdx.innerText = '0';
-                    }
-                    showToast('Search results ready!');
-                } catch (e) {
-                    showToast(e.message, 'error');
-                } finally {
-                    elements.btnGenerate.disabled = false;
-                    elements.genText.innerText = 'Generate Options';
+                    currentState.images = currentState.images.concat(data.images);
+                    renderImages(data.images.slice(0, 20), true);
                 }
-            }
-        };
-
-        elements.btnGenerateAi.onclick = async () => {
-            const name = elements.productName.value.trim();
-            elements.btnGenerateAi.disabled = true;
-            elements.genAiText.innerText = 'Generating...';
-            elements.aiPlaceholder.style.display = 'none';
-            elements.aiShimmer.style.display = 'block';
-
-            try {
-                const response = await fetch('/api/generate-ai', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ product_name: name })
-                });
-                const data = await response.json();
-                if (!response.ok) throw new Error(data.detail || 'AI Generation failed');
-
-                currentState.aiImage = data.ai_image;
-                elements.aiImg.src = 'data:image/png;base64,' + data.ai_image;
-                elements.aiImg.style.display = 'block';
-                elements.aiShimmer.style.display = 'none';
-                selectSource('ai');
-                showToast('AI Image generated!');
             } catch (e) {
                 showToast(e.message, 'error');
-                elements.aiPlaceholder.style.display = 'flex';
-                elements.aiShimmer.style.display = 'none';
             } finally {
-                elements.btnGenerateAi.disabled = false;
-                elements.genAiText.innerText = 'Generate AI Image';
-            }
-        };
-
-        elements.btnNext.onclick = (e) => {
-            e.stopPropagation();
-            if (currentState.currentIndex < currentState.images.length - 1) {
-                currentState.currentIndex++;
-                updateImageDisplay();
-            }
-        };
-
-        elements.btnPrev.onclick = (e) => {
-            e.stopPropagation();
-            if (currentState.currentIndex > 0) {
-                currentState.currentIndex--;
-                updateImageDisplay();
+                elements.btnLoadMore.disabled = false;
+                elements.btnLoadMore.innerText = 'Load More Images';
             }
         };
 
         elements.btnApprove.onclick = async () => {
             if (!currentState.productId) return showToast('No product ID found!', 'error');
+            if (!currentState.selectedImage) return showToast('Please select an image', 'error');
 
             elements.btnApprove.disabled = true;
             elements.btnApprove.innerText = 'Updating Shopify...';
 
-            let imageUrl, isBase64;
-            if (currentState.mode === 'reference') {
-                imageUrl = currentState.aiImage;
-                isBase64 = true;
-            } else {
-                imageUrl = currentState.selectedSource === 'ai'
-                    ? currentState.aiImage
-                    : currentState.images[currentState.currentIndex];
-                isBase64 = currentState.selectedSource === 'ai';
-            }
-
             const payload = {
                 product_id: currentState.productId,
-                product_name: elements.foundTitle.innerText,
-                image_url: imageUrl,
-                is_base64: isBase64
+                product_name: currentState.productName,
+                image_url: currentState.selectedImage,
+                is_base64: false
             };
 
             try {
@@ -793,7 +701,6 @@
                 showToast('Shopify updated successfully!');
                 elements.totalApp.innerText = data.stats.total_approved;
                 
-                // Refresh the page to get back to initial blank form after a short delay
                 setTimeout(() => {
                     window.location.reload();
                 }, 2000);
